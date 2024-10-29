@@ -1,25 +1,48 @@
 <template>
     <div class="menu-lateral">
-      <div class="label">
-        <img src="../../assets/svg/home.png" alt="">
-        <RouterLink to="/home">Home</RouterLink>
-      </div>
-      <div class="label">
-        <img src="../../assets/svg/produtos.png" alt=""> 
-        <RouterLink to="/home/produtos">Meus Podutos</RouterLink>
-      </div>
-      <div class="label">
-        <img src="../../assets/svg/comparar.png" alt="">
-        <RouterLink to="/comparar">Comparar</RouterLink>
-      </div>
-      <div class="label">
-        <img src="../../assets/svg/interrogation.png" alt="">
-        <RouterLink>Minhas comparações</RouterLink>
-      </div>
-      <div class="label">
-        <img src="../../assets/svg/engrenagem.png" alt="">
-        <RouterLink>Configurações</RouterLink>
-      </div>
+
+      <RouterLink to="/home">
+        <div class="label">
+            <img src="../../assets/svg/home.png" alt="">
+            <p>Home</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/produtos">
+        <div class="label">
+          <img src="../../assets/svg/produtos.png" alt=""> 
+          <p>Produtos</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/comparar">
+        <div class="label">
+          <img src="../../assets/svg/comparar.png" alt="">
+          <p>Comparar</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/graficos">
+        <div class="label">
+          <img src="../../assets/svg/graphics.png" alt="">
+          <p>Gráficos</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/relatorios">
+        <div class="label">
+          <img src="../../assets/svg/related.png" alt="">
+          <p>Relatórios</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/configuracoes">
+        <div class="label">
+          <img src="../../assets/svg/engrenagem.png" alt="">
+          <p>Configurações</p>
+        </div>
+      </RouterLink>
+
     </div>
 </template>
 <script setup>
@@ -28,30 +51,47 @@ import { RouterLink } from 'vue-router';
 </script>
 <style scoped>
 .menu-lateral {
+  height: 100%;
   display: flex;
-  border-right: 2px solid rgba(0, 0, 0, 0.183);
-  padding: 20px;
-  gap: 20px;
+  z-index: 1;
+  gap: 10px;
   flex-direction: column;
-  width: 250px;
-  background-color: #f2f2f2;
-  a {
-    text-decoration: none;
-    color: #000;
-    gap: 10px;
-    font-weight: bold;
-    transition: calc(.3s)
-  }
-  a:hover {
-    color: #007bff;
-  }
+  width: 220px;
+  background: linear-gradient(to right,#3389CE, #3389CE);
+  transition: calc(.3s)
 }
+
+a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  transition: calc(.3s);
+}
+
 .label {
+  padding: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  img {
-    width: 40px;
-  }
+  gap: 20px;
+  width: 100%;
+  transition: calc(.3s);
+}
+
+.label img {
+  width: 30px; /* Ajuste o tamanho para alinhar melhor com o texto */
+  height: 30px; /* Mantém proporção para evitar distorção */
+}
+
+.label p {
+  font-size: 16px;
+  margin: 0; /* Remove espaçamento padrão para centralizar */
+}
+
+.label:hover {
+  background: #0468ba;
+}
+
+.label:hover p {
+  color: white;
 }
 </style>

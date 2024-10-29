@@ -68,15 +68,18 @@ function handleLogin() {
     console.log('Logging in with', username.value, password.value);
     ishandleLogin()
   }
-    if (username.value === 'vitor' && password.value === '123') {
-        localStorage.setItem("user", JSON.stringify({ username: username.value }));
-        localStorage.setItem("password", JSON.stringify({ password: password.value }));
-        window.location.href = '/home';
+  if (username.value === 'vitor' && password.value === '123') {
+      localStorage.getItem('user');
+      localStorage.getItem('password');
+      window.location.href = '/home';
+    }
+    if (localStorage.getItem("user") && localStorage.getItem("password")) {
+      window.location.href = '/home';
     }
   else {
-    alert('Please fill in both username and password');
+    alert('Dados incorretos, por favor verificar infomações');
   }
-}
+}   
 </script>
 
 <style scoped>

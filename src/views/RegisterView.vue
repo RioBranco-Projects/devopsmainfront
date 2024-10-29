@@ -33,10 +33,14 @@ const formData = ref({
 });
 
 function handleSubmit() {
-  // Lógica para enviar os dados do formulário
-  console.log('Dados do registro:', formData.value);
+    localStorage.setItem('user', JSON.stringify(formData.value));
+    localStorage.setItem('password', formData.value.password);
+    console.log('Dados do registro:', formData.value);
+  console.log('Registro concluído com sucesso!');
+    window.location.href = '/home';
   // Aqui você pode integrar com sua API de registro, por exemplo.
 }
+// deixa salvo no navegador as informações desse login pra sempre
 </script>
 
 <style scoped>

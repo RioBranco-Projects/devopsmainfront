@@ -2,7 +2,10 @@
   <header v-if="!isLogin && !isRegister" class="header">
     <div class="container">
         <div class="dropdown" @mouseover="toggleDropdown" @mouseleave="toggleDropdown">
-          <button class="dropdown-btn">DevopsMain</button>
+          <button class="dropdown-btn">
+            <img src="/src/assets/svg/user.png" alt="">
+            <span>Olá, {{ myUser }}, tudo bom?</span>
+          </button>
           <div class="dropdown-content" v-if="dropdownVisible">
             <a href="#">My Account</a>
             <a class="logout" @click="logout">Logout</a>
@@ -24,6 +27,25 @@ const route = useRoute();
 const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
+const user = ref(null);
+
+// Função para obter o usuário do localStorage e armazená-lo
+const getUser = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      return parsedUser.name || parsedUser;
+    } catch (error) {
+      console.error('Erro ao converter string para objeto:', error);
+      return null; // Retorna null se houver erro
+    }
+  }
+  return null; // Retorna null se não houver usuário armazenado
+};
+
+// Inicializa myUser com o nome do usuário
+const myUser = ref(getUser());
 
 watch(route, (newRoute) => {
   isLogin.value = newRoute.path === '/';
@@ -35,7 +57,6 @@ watch(route, (newRoute) => {
 
 function logout() {
     console.log('Logout');
-    localStorage.removeItem("user");
     window.location.href = '/';
     console.log('Logout realizado com sucesso');
 }
@@ -101,6 +122,9 @@ function toggleDropdown() {
   color: #000;
   transition: calc(.2s);
   cursor: pointer;
+  img {
+    width: 60px;
+  }
 }
 .dropdown-btn:hover {
     color: #28a745;

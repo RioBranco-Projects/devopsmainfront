@@ -15,20 +15,24 @@ const router = createRouter({
     },
     {
       path: "/home",
-      component: () => import("../views/HomeView.vue"), // Componente layout pai
+      component: () => import("../views/HomeView.vue"),
       meta: { requiresAuth: true },
       children: [
         {
           path: "/home",
           name: "dashboard",
-          component: () => import("../views/DashboardView.vue"), // Página inicial do dashboard
+          component: () => import("../views/DashboardView.vue"),
         },
         {
-          path: "/home/produtos", // Caminho relativo para rota filha
+          path: "/produtos",
           name: "produtos",
           component: () => import("../views/ProdutosView.vue"),
         },
-        // Outras rotas-filhas conforme necessário
+        {
+          path: "/graficos",
+          name: "graphics",
+          component: () => import("../views/GraphicsView.vue"),
+        },
       ],
     },
   ],
