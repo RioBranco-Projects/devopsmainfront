@@ -20,7 +20,8 @@
     "vue-chartjs": "^5.3.1",
     "vue-icons": "^2.0.0",
     "vue-router": "^4.4.5",
-    "vuestic-ui": "^1.10.3"
+    "vuestic-ui": "^1.10.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",

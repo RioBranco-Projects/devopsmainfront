@@ -1,45 +1,31 @@
 <template>
-    <div class="menu-lateral">
+    <div class="menu-lateral" >
 
       <RouterLink to="/home">
         <div class="label">
-            <img src="../../assets/svg/home.png" alt="">
-            <p>Home</p>
+            <img src="../assets/svg/home.png" alt="">
+            <p>Dashboard</p>
         </div>
       </RouterLink>
 
       <RouterLink to="/produtos">
         <div class="label">
-          <img src="../../assets/svg/produtos.png" alt=""> 
-          <p>Produtos</p>
+          <img src="../assets/svg/produtos.png" alt=""> 
+          <p>Perguntas cadastradas</p>
         </div>
       </RouterLink>
 
       <RouterLink to="/comparar">
         <div class="label">
-          <img src="../../assets/svg/comparar.png" alt="">
-          <p>Comparar</p>
+          <img src="../assets/svg/icons/Aviso.png" alt="">
+          <p>Fazer comparação</p>
         </div>
       </RouterLink>
 
       <RouterLink to="/graficos">
         <div class="label">
-          <img src="../../assets/svg/graphics.png" alt="">
+          <img src="../assets/svg/graphics.png" alt="">
           <p>Gráficos</p>
-        </div>
-      </RouterLink>
-
-      <RouterLink to="/relatorios">
-        <div class="label">
-          <img src="../../assets/svg/related.png" alt="">
-          <p>Relatórios</p>
-        </div>
-      </RouterLink>
-
-      <RouterLink to="/configuracoes">
-        <div class="label">
-          <img src="../../assets/svg/engrenagem.png" alt="">
-          <p>Configurações</p>
         </div>
       </RouterLink>
 
@@ -51,12 +37,12 @@ import { RouterLink } from 'vue-router';
 </script>
 <style scoped>
 .menu-lateral {
-  height: 100%;
+  height: auto;
   display: flex;
   z-index: 1;
-  gap: 10px;
+  gap: 20px;
   flex-direction: column;
-  width: 220px;
+  width: auto;
   background: linear-gradient(to right,#3389CE, #3389CE);
   transition: calc(.3s)
 }

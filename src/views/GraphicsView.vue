@@ -71,14 +71,14 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
 }
 
 .chart-container {
-    margin-left: 150px;
-    margin-top: 50px;
-  width:1400px; /* 80% da largura do contêiner pai */
-  height: auto; /* 60% da altura da tela */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    width:1400px; /* 80% da largura do contêiner pai */
+    height: 100vh; /* 60% da altura da tela */
 }
 
 

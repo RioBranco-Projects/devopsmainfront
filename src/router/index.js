@@ -6,12 +6,12 @@ const router = createRouter({
     {
       path: "/",
       name: "login",
-      component: () => import("../views/LoginView.vue"),
+      component: () => import("../views/pages/LoginView.vue"),
     },
     {
       path: "/register",
       name: "register",
-      component: () => import("../views/RegisterView.vue"),
+      component: () => import("../views/pages/RegisterView.vue"),
     },
     {
       path: "/home",
@@ -26,12 +26,17 @@ const router = createRouter({
         {
           path: "/produtos",
           name: "produtos",
-          component: () => import("../views/ProdutosView.vue"),
+          component: () => import("../views/ComparateView.vue"),
         },
         {
           path: "/graficos",
           name: "graphics",
           component: () => import("../views/GraphicsView.vue"),
+        },
+        {
+          path: "/comparar",
+          name: "comparar",
+          component: () => import("../views/RegrasView.vue"),
         },
       ],
     },

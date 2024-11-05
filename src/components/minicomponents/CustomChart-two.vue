@@ -1,7 +1,6 @@
 <template>
   <div class="chart-container">
     <Bar :data="data" :options="options" class="chart" />
-    <Bar :data="data" :options="options" class="chart" />
   </div>
 </template>
 
@@ -40,7 +39,7 @@ export default {
             data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
           },
           {
-            label: 'Douglas',
+            label: 'Carlos',
             backgroundColor: '#557979',
             data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
           }

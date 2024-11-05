@@ -1,28 +1,30 @@
 <script setup>
 import { RouterView } from 'vue-router';
-import MenuLateral from '../components/minicomponents/MenuLateral.vue';
+import MenuLateral from '../components/MenuLateral.vue';
 import { computed } from 'vue';
-
 const isAuthenticated = computed(() => !!localStorage.getItem("user", "password"));
 </script>
+
 <template>
   <section class="home">
     <MenuLateral v-if="isAuthenticated" />
-      <div :class="{ 'dashboard': isAuthenticated }">
-        <Transition name="router" mode="out-in">
+      <Transition name="router" mode="fade">
+        <div :class="{ 'dashboard': isAuthenticated }">
           <RouterView />
-        </Transition>
-      </div>
+        </div>
+      </Transition>
   </section>
 </template>
 
-<style scope>
+<style scoped>
 .home {
-  height: 94vh;
+  height: auto;
   display: flex;
+  justify-content: center;
 }
 
 .dashboard {
+  width: 100%;
   background-color: #fff;
 }
 </style>

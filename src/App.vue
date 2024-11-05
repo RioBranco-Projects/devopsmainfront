@@ -1,30 +1,14 @@
-<script>
+<script setup>
 import Header from './components/Header.vue';
-import { RouterView } from 'vue-router'
-import { Transition } from 'vue';
-
-export default {
-  name: 'App',
-  components: {
-    Header,
-    RouterView,
-    Transition
-  },
-}
-
 </script>
 
 <template>
-
-    <Header/>
-    <router-view v-slot="{Component}">
-      <Transition name="router" mode="out-in">
-      <component :is="Component" :key="$router.fullPath">
-          {{Component}}
-        </component>
-      </Transition>
-    </router-view>
-
+  <Header />
+  <Transition name="router" mode="fade">
+      <router-view v-slot="{ Component }">  
+        <component :is="Component" :key="$route.fullPath" />
+      </router-view>
+    </Transition>
 </template>
 
 <style>

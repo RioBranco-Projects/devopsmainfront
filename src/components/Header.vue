@@ -4,7 +4,7 @@
         <div class="dropdown" @mouseover="toggleDropdown" @mouseleave="toggleDropdown">
           <button class="dropdown-btn">
             <img src="/src/assets/svg/user.png" alt="">
-            <span>Olá, {{ myUser }}, tudo bom?</span>
+            <span>{{ myUser }}</span>
           </button>
           <div class="dropdown-content" v-if="dropdownVisible">
             <a href="#">My Account</a>
@@ -27,7 +27,6 @@ const route = useRoute();
 const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
-const user = ref(null);
 
 // Função para obter o usuário do localStorage e armazená-lo
 const getUser = () => {
@@ -67,7 +66,9 @@ function toggleDropdown() {
 </script>
 
 <style scoped>
-
+span {
+  margin-left: 20px;
+}
 .header {
   background-color: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
@@ -79,7 +80,7 @@ function toggleDropdown() {
   align-items: center;
   justify-content: space-between;
   max-width: 1920px;
-  margin: 0 auto;
+  margin: auto;
 }
 
 .brand {
@@ -127,10 +128,11 @@ function toggleDropdown() {
   }
 }
 .dropdown-btn:hover {
-    color: #28a745;
+    color: #3389CE;
 }
 
 .dropdown-content {
+  transition: 400ms;
   display: none;
   width: 120px;
   position: absolute;
@@ -142,7 +144,7 @@ function toggleDropdown() {
   z-index: 10;
 }
 .logout {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .dropdown:hover .dropdown-content {
@@ -175,16 +177,17 @@ function toggleDropdown() {
 
 .search-button {
   padding: 5px 10px;
-  border: 1px solid #28a745;
+  border: 1px solid #3389CE;
   background-color: #fff;
-  color: #28a745;
+  color: #3389CE;
   border-radius: 4px;
   margin-left: 5px;
   cursor: pointer;
+  transition: 300ms;
 }
 
 .search-button:hover {
-  background-color: #28a745;
+  background-color: #3389CE;
   color: #fff;
 }
 </style>
