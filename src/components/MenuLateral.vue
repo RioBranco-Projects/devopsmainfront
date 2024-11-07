@@ -8,7 +8,7 @@
         </div>
       </RouterLink>
 
-      <RouterLink to="/produtos">
+      <RouterLink to="/perguntas">
         <div class="label">
           <img src="../assets/svg/produtos.png" alt=""> 
           <p>Perguntas cadastradas</p>
@@ -37,10 +37,11 @@ import { RouterLink } from 'vue-router';
 </script>
 <style scoped>
 .menu-lateral {
-  height: auto;
   display: flex;
+  box-sizing: border-box;
   z-index: 1;
-  gap: 20px;
+  height: 94vh;
+  gap: 10px;
   flex-direction: column;
   width: auto;
   background: linear-gradient(to right,#3389CE, #3389CE);

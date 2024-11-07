@@ -70,9 +70,8 @@ span {
   margin-left: 20px;
 }
 .header {
+  box-sizing: inherit;
   background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  padding: 10px 20px;
 }
 
 .container {
@@ -80,38 +79,8 @@ span {
   align-items: center;
   justify-content: space-between;
   max-width: 1920px;
-  margin: auto;
 }
 
-.brand {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-decoration: none;
-  color: #000;
-}
-
-/* Estilos de Navegação */
-.nav {
-  display: flex;
-  align-items: center;
-}
-
-.nav-link {
-  margin-right: 15px;
-  color: #000000;
-}
-
-.nav-link:hover {
-    text-decoration: none;
-  color: #28a745;
-}
-
-.nav-link.disabled {
-  color: #6c757d;
-  cursor: not-allowed;
-}
-
-/* Dropdown */
 .dropdown {
   position: relative;
 }
