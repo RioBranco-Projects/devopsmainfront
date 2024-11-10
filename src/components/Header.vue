@@ -28,40 +28,39 @@ const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
 
-// Função para obter o usuário do localStorage e armazená-lo
 const getUser = () => {
   const storedUser = localStorage.getItem('user');
   if (storedUser) {
     try {
+      const user = fetch('http://localhost:8080/user/login', {
+        method: 'GET',
+      })
       const parsedUser = JSON.parse(storedUser);
-      return parsedUser.name || parsedUser;
+      return parsedUser.name || "Usuário"; 
     } catch (error) {
       console.error('Erro ao converter string para objeto:', error);
-      return null; // Retorna null se houver erro
+      return "Usuário";
     }
   }
-  return null; // Retorna null se não houver usuário armazenado
+  return "Usuário";
+
 };
 
-// Inicializa myUser com o nome do usuário
 const myUser = ref(getUser());
 
 watch(route, (newRoute) => {
   isLogin.value = newRoute.path === '/';
   isRegister.value = newRoute.path === '/register';
 
-  // Adicionando logs para verificar o que está acontecendo
   console.log(`isLogin: ${isLogin.value}, isRegister: ${isRegister.value}`);
 });
 
 function logout() {
-    console.log('Logout');
     window.location.href = '/';
-    console.log('Logout realizado com sucesso');
 }
 
 function toggleDropdown() {
-  dropdownVisible.value = dropdownVisible.value; 
+  dropdownVisible.value = dropdownVisible.value;
 }
 </script>
 
@@ -86,6 +85,9 @@ span {
 }
 
 .dropdown-btn {
+  display: flex;
+  align-items: center;
+  padding: 10px;
   background: none;
   border: none;
   font-size: 25px;

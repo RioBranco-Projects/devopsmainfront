@@ -4,23 +4,38 @@
       <RouterLink to="/home">
         <div class="label">
             <img src="../assets/svg/home.png" alt="">
-            <p>Dashboard</p>
+            <p>Resumo</p>
         </div>
       </RouterLink>
 
-      <RouterLink to="/perguntas">
+      <RouterLink to="/produtos">
         <div class="label">
           <img src="../assets/svg/produtos.png" alt=""> 
-          <p>Perguntas cadastradas</p>
+          <p>Produtos</p>
         </div>
       </RouterLink>
-
+      
       <RouterLink to="/comparar">
         <div class="label">
           <img src="../assets/svg/icons/Aviso.png" alt="">
-          <p>Fazer comparação</p>
+          <p>Avaliar produtos</p>
         </div>
       </RouterLink>
+      
+      <RouterLink to="/sdas">
+        <div class="label">
+          <img src="../assets/svg/produtos.png" alt=""> 
+          <p>Cadastrar perguntas</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/sala">
+        <div class="label">
+          <img src="../assets/svg/icons/Aviso.png" alt="">
+          <p>Fazer avalição</p>
+        </div>
+      </RouterLink>
+
 
       <RouterLink to="/graficos">
         <div class="label">

@@ -5,7 +5,7 @@ import Header from './components/Header.vue';
 <template>
   <Header />
   <Transition name="router" mode="fade">
-      <router-view v-slot="{ Component }">  
+    <router-view v-slot="{ Component }">  
         <component :is="Component" :key="$route.fullPath" />
       </router-view>
     </Transition>

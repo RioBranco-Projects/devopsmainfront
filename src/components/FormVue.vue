@@ -1,3 +1,4 @@
+<!-- FormVue.vue -->
 <template>
   <form class="form">
     <div class="box">
@@ -7,109 +8,95 @@
         </div>
         <div class="sla">
           <h1>Projetista:</h1> 
-          <p>{{ myUser }}</p>
+          <p>Exemple</p>
         </div>
       </div>
     </div>
-    <div class="box2" :style="box2">
+    <div class="box2">
+      <p class="avaliacao">{{ AvaliacaoSalva }}</p>
       <div class="form-group">
-        <label for="email">{{ Q1 }}:</label>
-        <input type="text" :placeholder="d1" id="text" name="text1" required>
-      </div>
-      <div class="form-group">
-        <label for="password">{{ Q2 }}:</label>
-        <input type="text" :placeholder="d2" id="text" name="text2" required>
+        <label for="text1">{{ q1 }}:</label>
+        <input type="number" :placeholder="d1" id="text1" v-model.number="notas[0]" required>
       </div>
       <div class="form-group">
-        <label for="name">{{ Q3 }}:</label> 
-        <input type="text" :placeholder="d3" id="text" name="text3" required>
+        <label for="text2">{{ q2 }}:</label>
+        <input type="number" :placeholder="placeholders[1]" id="text2" v-model.number="notas[1]" required>
       </div>
-      <div class="botao" v-if="togleVisible">
-        <button @click.prevent="changeVisible">Adicionar mais um critério</button>
-        <button @click.prevent="salvarInput">Salvar regra</button>
+      <div class="form-group">
+        <label for="text3">{{ q3 }}:</label>
+        <input type="number" :placeholder="placeholders[2]" id="text3" v-model.number="notas[2]" required>
       </div>
-      <div class="form-group" v-if="boxVisible">
-        <label for="name">{{ Q4 }}:</label> 
-        <input type="text" :placeholder="d4" id="text" name="text4">
+      <div v-if="boxVisible" class="form-group">
+        <label for="text4">{{ q4 }}:</label>
+        <input type="number" :placeholder="placeholders[3]" id="text4" v-model.number="notas[3]">
       </div>
-      <div class="botao" v-if="togleVisible2">
-        <button @click.prevent="changeVisible2">Adicionar mais outro critério</button>
+      <div v-if="boxVisible2" class="form-group">
+        <label for="text5">{{ q5 }}:</label>
+        <input type="number" :placeholder="placeholders[4]" id="text5" v-model.number="notas[4]">
       </div>
-      <div class="form-group" v-if="boxVisible2">
-        <label for="name">{{ Q5 }}:</label> 
-        <input type="text" :placeholder="d5" id="text" name="text5">
-      </div>
-      <div class="botao" v-if="togleVisible3">
-        <button @click.prevent="changeVisible3">Retirar o critério</button>
+      <div class="botao">
+        <button v-if="!boxVisible" @click.prevent="adicionarNota">Adicionar mais um critério</button>
+        <button v-if="boxVisible && !boxVisible2" @click.prevent="adicionarNota2">Adicionar mais outro critério</button>
+        <button @click.prevent="salvarInput">Salvar avaliação</button>
       </div>
     </div>
+    <!-- Exibe o MediaCalculator se todos os campos obrigatórios estiverem preenchidos -->
+    <MediaCalculator v-if="todosCamposPreenchidos" :notas="notas.filter(n => n !== null)" />
   </form>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-import { ref } from 'vue';
+import { ref, computed, defineProps } from 'vue';
+import MediaCalculator from './minicomponents/MediaCalculator.vue';
 
-const getUser = () => {
-  const storedUser = localStorage.getItem('user');
-  const parsedUser = JSON.parse(storedUser);
-  return parsedUser.name || parsedUser;
-};
+const props = defineProps({
+  mediaPonderada: Number,
+  q1: String,
+  q2: String,
+  q3: String,
+  q4: String,
+  q5: String,
+  d1: String,
+  d2: String,
+  d3: String,
+  d4: String,
+  d5: String
+});
 
-const myUser = ref(getUser());
-const togleVisible = ref(true);
-const togleVisible2 = ref(false);
+const AvaliacaoSalva = ref('');
+const questions = ref(["Q1", "Q2", "Q3", "Q4", "Q5"]);
+const placeholders = ref(["d1", "d2", "d3", "d4", "d5"]);
+const notas = ref([0, 0, 0, null, null]); // Inicia com três notas e duas como null
 const boxVisible = ref(false);
 const boxVisible2 = ref(false);
-const togleVisible3 = ref(false);
 
-function changeVisible2() {
-  boxVisible2.value = !boxVisible2.value;
-  togleVisible2.value = !togleVisible2.value;
-  togleVisible3.value = !togleVisible3.value;
+const todosCamposPreenchidos = computed(() => {
+  return notas.value.slice(0, 3).every(nota => nota !== null && nota >= 0 && nota <= 10) &&
+         (!boxVisible.value || notas.value[3] !== null) &&
+         (!boxVisible2.value || notas.value[4] !== null);
+});
+
+function adicionarNota() {
+  boxVisible.value = true;
 }
 
-function changeVisible() {
-  togleVisible.value = !togleVisible.value;
-  boxVisible.value = !boxVisible.value;
-  togleVisible2.value = !togleVisible2.value;
+function adicionarNota2() {
+  boxVisible2.value = true;
 }
 
 function salvarInput() {
-  const input1 = document.getElementsByName('text1');
-  const input2 = document.getElementsByName('text2');
-  const input3 = document.getElementsByName('text3');
-  if (input1 && input2 && input3) {
-    localStorage.getItem('input1', input1);
-    localStorage.getItem('input2', input2);
-    localStorage.getItem('input3', input3);
-    console.log('Dados do registro:', input1, input2, input3);
+  const camposValidos = notas.value.slice(0, 3).every(nota => nota >= 0 && nota <= 10) &&
+                        (!boxVisible.value || (notas.value[3] !== null && notas.value[3] >= 0 && notas.value[3] <= 10)) &&
+                        (!boxVisible2.value || (notas.value[4] !== null && notas.value[4] >= 0 && notas.value[4] <= 10));
+
+  if (!camposValidos) {
+    AvaliacaoSalva.value = "Cada nota deve ser entre 0 e 10.";
+    setTimeout(() => { AvaliacaoSalva.value = ""; }, 1500);
+  } else {
+    AvaliacaoSalva.value = "Avaliação feita com sucesso!";
+    setTimeout(() => { AvaliacaoSalva.value = ""; }, 2000);
   }
 }
-
-function changeVisible3() {
-  if (boxVisible2.value) {
-    boxVisible2.value = false;
-    togleVisible2.value = false;
-  } else if (boxVisible.value) {
-    boxVisible.value = false;
-    togleVisible.value = true;
-    togleVisible3.value = false;
-  }
-}
-
-const props = defineProps({
-  Q1: String,
-  d1: String,
-  Q2: String,
-  d2: String,
-  Q3: String,
-  d3: String,
-  Q4: String,
-  d4: String,
-  Q5: String,
-  d5: String
-});
 </script>
 
 <style scoped>
@@ -123,6 +110,7 @@ html, body {
 
 .form {
   display: flex;
+  gap: 20px;
   flex-direction: column;
   padding: 50px;
   width: 100%;
@@ -161,25 +149,27 @@ html, body {
 
 .form-group {
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  margin: 0 0 10px 0;
   width: 100%;
   max-width: 800px;
 }
 
 .form-group label {
-  font-size: 25px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: bolder;
   color: #555;
 }
 
 .form-group input {
-  padding: 8px;
-  font-size: 15px;
-  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: center;
+  font-size: 20px;
+  border: none;
   border-radius: 5px;
-  width: 100px;
+  width: 50px;
   background-color: #f9f9f9;
   transition: all 0.3s ease-in-out;
 }
@@ -187,6 +177,15 @@ html, body {
 .form-group input:focus {
   background-color: #fff;
   outline: none;
+}
+input[type=number]::-webkit-inner-spin-button { 
+    -webkit-appearance: none;
+    
+}
+input[type=number] { 
+   -moz-appearance: textfield;
+   appearance: textfield;
+
 }
 
 .botao {
@@ -204,13 +203,12 @@ html, body {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
-  transition: calc(.3s);
 }
 
 .botao button:hover {
   background-color: #0e66af;
   transform: scale(1.025);
-  color: white
+  color: white;
 }
 
 .box, .box2 {
@@ -218,7 +216,7 @@ html, body {
   background-color: #ededed;
   padding: 15px;
   border-radius: 10px;
-  max-width: 820px;
+  max-width: 700px;
   margin: 10px 0;
 }
 
@@ -228,5 +226,12 @@ html, body {
   background-color: #ededed;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.avaliacao {
+  color: rgb(49, 164, 49);
+  font-size: 20px;
+  text-align: center;
+  font-weight: bolder;
 }
 </style>

@@ -1,105 +1,155 @@
 <template>
-  <div class="register-container">
-    <h1>Registro</h1>
-    <form @submit.prevent="handleSubmit" class="register-form">
-      <div class="form-group">
-        <label for="name">Nome</label>
-        <input type="text" id="name" v-model="formData.name" required />
-      </div>
-      <div class="form-group">
-        <label for="email">E-mail</label>
-        <input type="email" id="email" v-model="formData.email" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Senha</label>
-        <input type="password" id="password" v-model="formData.password" required />
-      </div>
-      <button type="submit" class="submit-button">Registrar</button>
-    </form>
-    <p class="login-link">
-      Já tem uma conta? <RouterLink to="/">Faça login</RouterLink>
-    </p>
+  <div class="register-page">
+    <div class="register-container">
+      <h2>Registro</h2>
+      <form @submit.prevent="handleRegister">
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input
+            type="text"
+            id="name"
+            v-model="name"
+            placeholder="Digite seu nome"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            v-model="email"
+            placeholder="Digite seu email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            placeholder="Digite sua senha"
+            required
+          />
+        </div>
+
+        <button type="submit" class="register-button">Registrar</button>
+      </form>
+
+      <p class="login-link">
+        Já tem uma conta? <router-link to="/">Faça login aqui</router-link>
+      </p>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-const formData = ref({
-  name: '',
-  email: '',
-  password: ''
-});
+const router = useRouter();
+const name = ref('');
+const email = ref('');
+const password = ref('');
 
-function handleSubmit() {
-    localStorage.setItem('user', JSON.stringify(formData.value));
-    localStorage.setItem('password', formData.value.password);
-    console.log('Dados do registro:', formData.value);
-  console.log('Registro concluído com sucesso!');
-    window.location.href = '/home';
-  // Aqui você pode integrar com sua API de registro, por exemplo.
-}
-// deixa salvo no navegador as informações desse login pra sempre
+const handleRegister = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/user/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        nome: name.value,
+        email: email.value,
+        password: password.value,
+      }),
+    });
+
+    if (!response.ok) {
+      // Lidar com erro se o status não estiver OK (2xx)
+      const errorData = await response.json();
+      console.error('Erro ao registrar:', errorData);
+      alert(`Erro: ${errorData.msg || 'Erro ao registrar'}`);
+      return;
+    }
+
+    // Sucesso
+    const data = await response.json();
+    console.log('Registro bem-sucedido:', data);
+    alert('Registro realizado com sucesso!');
+    router.push('/');
+
+  } catch (error) {
+    console.error('Erro de rede:', error);
+    alert('Erro de conexão. Verifique sua rede.');
+  }
+};
 </script>
 
 <style scoped>
-.register-container {
-  max-width: 400px;
-  margin: 40px auto; /* Adiciona margem em cima e embaixo */
-  padding: 20px;
-  border: 1px solid #dee2e6; /* Cor semelhante ao cabeçalho */
-  border-radius: 8px;
-  background-color: #f8f9fa; /* Cor de fundo clara */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+/* Estilo básico para a página de registro */
+.register-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f2f2;
 }
 
-h1 {
+.register-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  margin-bottom: 20px; /* Espaçamento inferior */
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .form-group {
   margin-bottom: 15px;
+  text-align: left;
 }
 
 label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold; /* Negrito para os rótulos */
+  font-size: 14px;
+  color: #333;
 }
 
-input {
+input[type="text"],
+input[type="email"],
+input[type="password"] {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ced4da; /* Bordas claras */
+  border: 1px solid #ccc;
   border-radius: 4px;
-  outline: none;
-  transition: border-color 0.2s; /* Animação para transição de borda */
+  box-sizing: border-box;
 }
 
-input:focus {
-  border-color: #28a745; /* Cor da borda ao focar */
-}
-
-.submit-button {
+.register-button {
   width: 100%;
   padding: 10px;
-  background-color: #28a745; /* Verde do botão */
-  color: white;
+  background-color: #28a745;
   border: none;
   border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
   cursor: pointer;
-  font-weight: bold; /* Negrito para o texto do botão */
-  transition: background-color 0.2s; /* Animação para transição de cor */
 }
 
-.submit-button:hover {
-  background-color: #218838; /* Cor do botão ao passar o mouse */
-}
-
-.login-link {
-  text-align: center; /* Centraliza o texto do link */
-  margin-top: 15px; /* Espaçamento superior */
+.register-button:hover {
+  background-color: #218838;
 }
 </style>

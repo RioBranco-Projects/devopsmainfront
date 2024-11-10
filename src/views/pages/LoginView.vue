@@ -4,82 +4,78 @@
       <h2>Login</h2>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
-          <input 
-            type="text" 
-            id="username" 
-            v-model="username" 
-            placeholder="Enter your username" 
-            required
-          />
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="password" 
-            placeholder="Enter your password" 
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            v-model="email"
+            placeholder="Digite seu email"
             required
           />
         </div>
 
-        <button type="submit" class="login-button">Login</button>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            placeholder="Digite sua senha"
+            required
+          />
+        </div>
+
+        <button type="submit" class="login-button">Entrar</button>
       </form>
 
       <p class="register-link">
         Não tem uma conta? <router-link to="/register">Registre-se aqui</router-link>
       </p>
+
+      <p class="error-message">{{ mensagemErro }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-const apiUrl = 'http://localhost:3000/api/login';
-
-function ishandleLogin() {
-  axios
-    .post(apiUrl, {
-      username: username.value,
-      password: password.value
-    })
-    .then((response) => {
-        console.log(response.data);
-        if (response.data.success) {
-          // Redireciona para a pagina de login
-          window.location.href = '/home';
-        }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-
-const username = ref('');
+const router = useRouter();
+const mensagemErro = ref('');
+const email = ref('')
 const password = ref('');
 
-function handleLogin() {
-  // Verifica se o campo de username e password foram preenchidos
-  if (username.value && password.value) {
-    console.log('Logging in with', username.value, password.value);
-    ishandleLogin()
-  }
-  if (username.value === 'vitor' && password.value === '123') {
-      localStorage.getItem('user');
-      localStorage.getItem('password');
-      window.location.href = '/home';
+const handleLogin = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/user/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      mensagemErro.value = errorData.msg || 'Erro ao fazer login';
+      return;
     }
-    if (localStorage.getItem("user") && localStorage.getItem("password")) {
-      window.location.href = '/home';
-    }
-  else {
-    alert('Dados incorretos, por favor verificar infomações');
+
+    // Sucesso
+    const user = await response.json();
+    localStorage.setItem('user', JSON.stringify(user));
+
+    router.push('/home'); // Redireciona para a página principal após login bem-sucedido
+  } catch (error) {
+    console.error('Erro ao fazer login:', error.message);
+    mensagemErro.value = 'Erro de conexão. Verifique sua rede.';
   }
-}   
+};
+
 </script>
 
 <style scoped>
@@ -119,7 +115,7 @@ label {
   color: #333;
 }
 
-input[type="text"],
+input[type="email"],
 input[type="password"] {
   width: 100%;
   padding: 10px;
@@ -131,7 +127,7 @@ input[type="password"] {
 .login-button {
   width: 100%;
   padding: 10px;
-  background-color: #28a745;
+  background-color: #007bff;
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -140,6 +136,11 @@ input[type="password"] {
 }
 
 .login-button:hover {
-  background-color: #218838;
+  background-color: #0056b3;
+}
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
 }
 </style>

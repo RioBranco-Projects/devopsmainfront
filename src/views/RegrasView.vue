@@ -7,14 +7,6 @@
     <div class="abas">
       <button 
         class="button" 
-        v-bind:class="{ activeTab: activeIndex === 0 }" 
-        @click="setActiveTab(0)"
-      >
-        Objeto
-      </button>
-      
-      <button 
-        class="button" 
         v-for="(tab, index) in tabs" 
         :key="index" 
         v-bind:class="{ activeTab: activeIndex === index + 1, inactiveTab: tab.inactive }" 
@@ -22,17 +14,10 @@
       >
         {{ tab.title }}
         <span 
-          v-if="tabs.length > 6 && index >= 6" 
+          v-if="tabs.length > 7 && index >= 7" 
           @click.stop="remover(index)" 
-          class="remove-tab">{{ tab.title + tabs > 6 ? "" : "X" }}
+          class="remove-tab">{{ tab.title + tabs >7 ? "" : "X" }}
         </span>
-      </button>
-      <button 
-        class="button" 
-        @click="adicionar" 
-        :disabled="tabs.length >= 9"
-      >
-        +
       </button>
       <div class="inativar-tab">
         <button @click="inativarPrimeiraAbaAtiva">Inativar Primeira Aba Ativa</button>
@@ -42,77 +27,92 @@
     <div class="box">
       <div class="formulario">
         <Transition name="slide">
-          <div v-show="activeIndex === 0" class="form-content">
-            <FormVue 
-              style="background-color: #98C6E8;"
-              Q1="O1 - Identificação única"
-              Q2="02 - Capacidade de atualização"
-              Q3="O3 - Consumo de energia"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
           <div v-show="activeIndex === 1" class="form-content">
             <FormVue 
-              style="background-color: darkturquoise;"
-              Q1="S1 - Tipos de sensores"
-              Q2="S2 - Precisão e calibração"
-              Q3="S3 - Resiliência Ambiental"
+              style="background-color: #98C6E8;"
+              q1="Identificação única"
+              q2="Capacidade de atualização"
+              q3="Consumo de energia"
+              :mediaPonderada="mediaPorAba[1]"
+              @atualizar-media="(media) => setMediaPonderada(1, media)"
             />
           </div>
         </Transition>
         <Transition name="slide" appear>
           <div v-show="activeIndex === 2" class="form-content">
             <FormVue 
-              style="background-color: cadetblue;"
-              Q1="T1 - Protocolos de comunicação"
-              Q2="T2 - Gerenciamento de banda"
-              Q3="T3 - Estratégias de retransmissão"
+              style="background-color: darkturquoise;"
+              q1="Tipos de sensores"
+              q2="Precisão e calibração"
+              q3="Resiliência Ambiental"
+              :mediaPonderada="mediaPorAba[2]"
+              @atualizar-media="(media) => setMediaPonderada(2, media)"
             />
           </div>
         </Transition>
         <Transition name="slide" appear>
           <div v-show="activeIndex === 3" class="form-content">
             <FormVue 
-              style="background-color: deepskyblue"
-              Q1="C1 - Escalabilidade"
-              Q2="C2 - Recuperação de desastres"
-              Q3="C3 - Qualidade de dados"
+              style="background-color: cadetblue;"
+              q1="Protocólos de comunicação"
+              q2="Gerenciamento de banda"
+              q3="Estratégias de retransmissão"
+              :mediaPonderada="mediaPorAba[3]"
+              @atualizar-media="(media) => setMediaPonderada(3, media)"
             />
           </div>
         </Transition>
         <Transition name="slide" appear>
           <div v-show="activeIndex === 4" class="form-content">
             <FormVue 
-              style="background-color: lightskyblue"
-              Q1="C1 - Escalabilidade"
-              Q2="C2 - Recuperação de desastres"
-              Q3="C3 - Qualidade de dados"
+              style="background-color: darkcyan;"
+              q1="Escalabilidade"
+              q2="Recuperação de desastres"
+              q3="Qualidade dos dados"
+              :mediaPonderada="mediaPorAba[4]"
+              @atualizar-media="(media) => setMediaPonderada(4, media)"
             />
           </div>
         </Transition>
         <Transition name="slide" appear>
           <div v-show="activeIndex === 5" class="form-content">
             <FormVue 
-              style="background-color: darkcyan"
-              Q1="A1 - Processamento de dados"
-              Q2="A2 - Insights acionáveis"
-              Q3="A3 - Visualização de dados"
+              style="background-color: deepskyblue;"
+              q1="Privacidade e proteção de dados"
+              q2="Segurança da informação"
+              q3="Gerenciamento de acesso e auditoria"
+              :mediaPonderada="mediaPorAba[5]"
+              @atualizar-media="(media) => setMediaPonderada(5, media)"
             />
           </div>
         </Transition>
         <Transition name="slide" appear>
           <div v-show="activeIndex === 6" class="form-content">
             <FormVue 
-              style="background-color: dodgerblue"
-              Q1="U1 - Experiência do Usuário"
-              Q2="U2 - Acessibilidade"
-              Q3="U3 - Usabilidade"
+              style="background-color: dodgerblue;"
+              q1="Processamento de dados"
+              q2="Insights acionáveis"
+              q3="Visualização de dados"
+              :mediaPonderada="mediaPorAba[6]"
+              @atualizar-media="(media) => setMediaPonderada(6, media)"
             />
           </div>
         </Transition>
-      </div><!-- box -->
-    </div><!-- produtos -->
+        <Transition name="slide" appear>
+          <div v-show="activeIndex === 7" class="form-content">
+            <FormVue 
+              style="background-color: lightskyblue;"
+              q1="Experiência do usuário"
+              q2="Acessibilidade"
+              q3="Usabilidade"
+              :mediaPonderada="mediaPorAba[7]"
+              @atualizar-media="(media) => setMediaPonderada(7, media)"
+            />
+          </div>
+        </Transition>
+        <!-- Repetir para outras abas -->
+      </div>
+    </div>
   </section>
 </template>
 
@@ -120,45 +120,39 @@
 import { ref } from 'vue';
 import FormVue from '@/components/FormVue.vue';
 
-const activeIndex = ref(0); // Índice da aba ativa
+const activeIndex = ref(1);
+const mediaPorAba = ref(Array(7).fill(''));
 
-// Criação das abas com valores iniciais
+function setMediaPonderada(index, media) {
+  mediaPorAba.value[index] = media;
+}
+
 const initialTabs = [
+  { title: 'Objeto', inactive: false },
   { title: 'Sensores', inactive: false },
-  { title: 'Transmissão de dados', inactive: false },
+  { title: 'Transmissão', inactive: false },
   { title: 'Cloud', inactive: false },
-  { title: 'Privacidade e segurança', inactive: false },
+  { title: 'Segurança', inactive: false },
   { title: 'Análise', inactive: false },
   { title: 'Uso', inactive: false },
 ];
 
-const tabs = ref(initialTabs); // Array de abas, inicializa com 7 tabs
-
-function adicionar() {
-  if (tabs.value.length <= 9) {
-    const nextIndex = tabs.value.length + 1; // Para o próximo título
-    tabs.value.push({
-      title: `Q${nextIndex}`,
-      inactive: false,
-    });
-  }
-}
+const tabs = ref(initialTabs); 
 
 function inativarPrimeiraAbaAtiva() {
-  // Procura a primeira aba ativa (não inativa) e a marca como inativa
-  const firstActiveIndex = tabs.value.findIndex(tab => !tab.inactive);
-  if (firstActiveIndex !== -1) {
-    tabs.value[firstActiveIndex].inactive = true;
-
-    // Ajusta o índice ativo para a próxima aba ativa
-    if (activeIndex.value === firstActiveIndex) {
-      activeIndex.value = firstActiveIndex + 1;
-    }
+  if (tabs.value[activeIndex.value - 1]) {
+    tabs.value[activeIndex.value - 1].inactive = true;
+  }
+  let nextActiveIndex = tabs.value.findIndex(
+    (tab, idx) => !tab.inactive && idx >= activeIndex.value
+  );
+  if (nextActiveIndex !== -1) {
+    activeIndex.value = nextActiveIndex + 1;
   }
 }
 
 function remover(index) {
-  if (tabs.value.length > 6) { 
+  if (tabs.value.length > 7) { 
     tabs.value.splice(index, 1);
     if (activeIndex.value === index + 1) {
       activeIndex.value = 0;
@@ -169,11 +163,12 @@ function remover(index) {
 }
 
 function setActiveTab(index) {
-  if (!tabs.value[index].inactive) { // Impede que a aba inativa seja ativa
-    activeIndex.value = index; // Define a aba ativa
+  if (!tabs.value[index - 1].inactive) {
+    activeIndex.value = index; 
   }
 }
 </script>
+
 
 <style scoped>
 .title {
@@ -215,12 +210,11 @@ function setActiveTab(index) {
 }
 
 .formulario {
-  padding: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80vh;
+  height: 81vh;
   position: relative;
   overflow: hidden;
 }
@@ -232,20 +226,21 @@ function setActiveTab(index) {
 }
 
 .abas {
-  padding: 10px;
-  gap: 10px;
+  padding: 5px;
+  gap: 5px;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   width: auto;
 }
 
 .button {
+  background-color: #ececec;
   border: none;
-  width: 140px;
+  width: 120px;
   height: auto;
   border-radius: 10px;
   font-weight: bold;
-  cursor: pointer;
+  cursor: default;
 }
 
 .remove-tab {

@@ -6,7 +6,7 @@
       <div class="card-content">
         <h3>{{ title }}</h3>
         <p class="value">{{ totalSales }}</p>
-        <p class="description">{{ description }}</p>
+        <p class="nota">{{ nota }}</p>
       </div>
     </div>
 </template>
@@ -16,7 +16,8 @@ const props = defineProps({
     title: String,
     img: String,
     totalSales: String,
-    description: String
+    description: String,
+    nota: Number,
 })
 
 
@@ -64,7 +65,7 @@ const props = defineProps({
   margin: 5px 0;
 }
 
-.card .description {
+.card .nota {
   font-size: 0.9rem;
   color: #666;
 }
