@@ -21,20 +21,6 @@
           <p>Avaliar produtos</p>
         </div>
       </RouterLink>
-      
-      <RouterLink to="/sdas">
-        <div class="label">
-          <img src="../assets/svg/produtos.png" alt=""> 
-          <p>Cadastrar perguntas</p>
-        </div>
-      </RouterLink>
-
-      <RouterLink to="/sala">
-        <div class="label">
-          <img src="../assets/svg/icons/Aviso.png" alt="">
-          <p>Fazer avalição</p>
-        </div>
-      </RouterLink>
 
 
       <RouterLink to="/graficos">

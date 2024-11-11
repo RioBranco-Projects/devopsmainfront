@@ -72,8 +72,8 @@ const handleLogin = async () => {
     }
 
     const user = await response.json();
-    localStorage.setItem('userEmail', user.email);
-    localStorage.setItem('userName', user.name);
+    localStorage.getItem('userEmail', user.email);
+    localStorage.getItem('userName', user.name);
     console.log(localStorage.getItem('userEmail'));
     console.log(localStorage.getItem('userName'));
 
@@ -87,7 +87,6 @@ const handleLogin = async () => {
 
 
 <style scoped>
-/* Estilo básico para a página de login */
 .login-page {
   display: flex;
   align-items: center;

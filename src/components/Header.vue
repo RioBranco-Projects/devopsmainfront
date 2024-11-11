@@ -23,24 +23,18 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
-const userEmail = ref('');
-const userName = ref('');
+const userName = ref(localStorage.getItem('userName') || 'Visitante');
 
 function captalizeFistLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
-
-onMounted(() => {
-  userEmail.value = localStorage.getItem('userEmail') || 'Visitante';
-  userName.value = localStorage.getItem('userName') || 'Visitante';
-});
 
 watch(route, (newRoute) => {
   isLogin.value = newRoute.path === '/';
