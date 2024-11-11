@@ -53,6 +53,7 @@ const currentMonth = ref(new Date().toLocaleDateString('pt-BR', { day: 'numeric'
 .dashboard {
   background-color: #f1f1f1;
   width: auto;
+  height: 92vh;
 }
 a {
   text-decoration: none;

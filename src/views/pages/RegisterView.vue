@@ -1,7 +1,9 @@
 <template>
+  <Transition name="fade-horizontal">
+
   <div class="register-page">
     <div class="register-container">
-      <h2>Registro</h2>
+      <h2>Registre-se</h2>
       <form @submit.prevent="handleRegister">
         <div class="form-group">
           <label for="name">Nome</label>
@@ -43,7 +45,9 @@
         Já tem uma conta? <router-link to="/">Faça login aqui</router-link>
       </p>
     </div>
+    <img src="/src/assets/logo/qualiot.png" alt="">
   </div>
+</Transition>
 </template>
 
 <script setup>
@@ -57,7 +61,7 @@ const password = ref('');
 
 const handleRegister = async () => {
   try {
-    const response = await fetch('http://localhost:8080/user/', {
+    const response = await fetch('http://localhost:8081/user/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,18 +75,21 @@ const handleRegister = async () => {
     });
 
     if (!response.ok) {
-      // Lidar com erro se o status não estiver OK (2xx)
       const errorData = await response.json();
       console.error('Erro ao registrar:', errorData);
       alert(`Erro: ${errorData.msg || 'Erro ao registrar'}`);
       return;
     }
-
-    // Sucesso
-    const data = await response.json();
-    console.log('Registro bem-sucedido:', data);
-    alert('Registro realizado com sucesso!');
-    router.push('/');
+    else {
+      router.push('/home'); 
+      const data = await response.json();
+      console.log('Registro bem-sucedido:', data);
+      alert('Registro realizado com sucesso!');
+      localStorage.setItem('userEmail', email.value);
+      localStorage.setItem('userName', name.value);
+      console.log(localStorage.getItem('userEmail'));
+      console.log(localStorage.getItem('userName'));
+    }
 
   } catch (error) {
     console.error('Erro de rede:', error);
@@ -90,6 +97,8 @@ const handleRegister = async () => {
   }
 };
 </script>
+
+
 
 <style scoped>
 /* Estilo básico para a página de registro */
@@ -103,10 +112,14 @@ const handleRegister = async () => {
 
 .register-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 500px;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
@@ -114,17 +127,18 @@ const handleRegister = async () => {
 h2 {
   margin-bottom: 20px;
   color: #333;
+  font-size: 40px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   text-align: left;
 }
 
 label {
   display: block;
   margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 20px;
   color: #333;
 }
 
@@ -133,23 +147,53 @@ input[type="email"],
 input[type="password"] {
   width: 100%;
   padding: 10px;
+  font-size: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
 }
 
 .register-button {
-  width: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
   padding: 10px;
-  background-color: #28a745;
+  background-color: #007bff;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   color: #fff;
   font-size: 16px;
   cursor: pointer;
+  transition: calc(.3s);
 }
 
 .register-button:hover {
-  background-color: #218838;
+  background-color: #0056b3;
+}
+.fade-horizontal-enter-active, .fade-horizontal-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-horizontal-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.fade-horizontal-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-horizontal-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-horizontal-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
 }
 </style>

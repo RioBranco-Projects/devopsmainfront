@@ -1,5 +1,6 @@
 <script setup>
 import Header from './components/Header.vue';
+
 </script>
 
 <template>
@@ -17,6 +18,9 @@ import Header from './components/Header.vue';
   padding: 0;
   box-sizing: border-box;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+body {
+  background-color: #eaeaea;
 }
 .router-enter-from {
   opacity: 0;

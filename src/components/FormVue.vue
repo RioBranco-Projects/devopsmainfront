@@ -1,4 +1,3 @@
-<!-- FormVue.vue -->
 <template>
   <form class="form">
     <div class="box">
@@ -8,22 +7,22 @@
         </div>
         <div class="sla">
           <h1>Projetista:</h1> 
-          <p>Exemple</p>
+          <p>{{ userName }}</p>
         </div>
       </div>
     </div>
     <div class="box2">
       <p class="avaliacao">{{ AvaliacaoSalva }}</p>
       <div class="form-group">
-        <label for="text1">{{ q1 }}:</label>
+        <label for="text1">{{ q1 }} (peso: 4):</label>
         <input type="number" :placeholder="d1" id="text1" v-model.number="notas[0]" required>
       </div>
       <div class="form-group">
-        <label for="text2">{{ q2 }}:</label>
+        <label for="text2">{{ q2 }} (peso: 3):</label>
         <input type="number" :placeholder="placeholders[1]" id="text2" v-model.number="notas[1]" required>
       </div>
       <div class="form-group">
-        <label for="text3">{{ q3 }}:</label>
+        <label for="text3">{{ q3 }} (peso: 3):</label>
         <input type="number" :placeholder="placeholders[2]" id="text3" v-model.number="notas[2]" required>
       </div>
       <div v-if="boxVisible" class="form-group">
@@ -46,8 +45,10 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed, defineProps, defineEmits } from 'vue';
 import MediaCalculator from './minicomponents/MediaCalculator.vue';
+
+const userName = ref(localStorage.getItem('userName') || 'Visitante');
 
 const props = defineProps({
   mediaPonderada: Number,
@@ -63,8 +64,9 @@ const props = defineProps({
   d5: String
 });
 
+const emit = defineEmits(['atualizar-media']);
+
 const AvaliacaoSalva = ref('');
-const questions = ref(["Q1", "Q2", "Q3", "Q4", "Q5"]);
 const placeholders = ref(["d1", "d2", "d3", "d4", "d5"]);
 const notas = ref([0, 0, 0, null, null]); // Inicia com três notas e duas como null
 const boxVisible = ref(false);
@@ -76,6 +78,20 @@ const todosCamposPreenchidos = computed(() => {
          (!boxVisible2.value || notas.value[4] !== null);
 });
 
+// Função para calcular a média ponderada com pesos dinâmicos
+function calcularMediaPonderada(notas) {
+  const pesos = [4, 3, 3, 0, 0]; // Pesos iniciais
+  if (boxVisible.value) pesos[3] = 2;
+  if (boxVisible2.value) pesos[4] = 1;
+
+  const notasValidas = notas.filter((nota) => nota !== null);
+  const pesosValidos = pesos.slice(0, notasValidas.length);
+  const somaPesos = pesosValidos.reduce((acc, peso) => acc + peso, 0);
+  const somaPonderada = notasValidas.reduce((acc, nota, index) => acc + nota * pesosValidos[index], 0);
+
+  return (somaPonderada / somaPesos).toFixed(2);
+}
+
 function adicionarNota() {
   boxVisible.value = true;
 }
@@ -84,6 +100,7 @@ function adicionarNota2() {
   boxVisible2.value = true;
 }
 
+// Salva a avaliação e emite a média ponderada
 function salvarInput() {
   const camposValidos = notas.value.slice(0, 3).every(nota => nota >= 0 && nota <= 10) &&
                         (!boxVisible.value || (notas.value[3] !== null && notas.value[3] >= 0 && notas.value[3] <= 10)) &&
@@ -93,8 +110,10 @@ function salvarInput() {
     AvaliacaoSalva.value = "Cada nota deve ser entre 0 e 10.";
     setTimeout(() => { AvaliacaoSalva.value = ""; }, 1500);
   } else {
+    const media = calcularMediaPonderada(notas.value); // Calcula a média ponderada
     AvaliacaoSalva.value = "Avaliação feita com sucesso!";
     setTimeout(() => { AvaliacaoSalva.value = ""; }, 2000);
+    emit('atualizar-media', media); // Emite a média calculada ao componente pai
   }
 }
 </script>
@@ -110,10 +129,11 @@ html, body {
 
 .form {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   flex-direction: column;
-  padding: 50px;
-  width: 100%;
+  padding: 20px;
+  width: 700px;
+  border-radius: 15px;
   height: 100%;
   box-sizing: border-box;
 }
@@ -152,9 +172,8 @@ html, body {
   justify-content: space-between;
   display: flex;
   gap: 10px;
-  margin: 0 0 10px 0;
-  width: 100%;
-  max-width: 800px;
+  margin: 0 0 20px 0;
+  width: auto;
 }
 
 .form-group label {
@@ -202,7 +221,7 @@ input[type=number] {
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
+  transition: calc(.3s);
 }
 
 .botao button:hover {

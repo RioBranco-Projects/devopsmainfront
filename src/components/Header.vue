@@ -4,12 +4,15 @@
         <div class="dropdown" @mouseover="toggleDropdown" @mouseleave="toggleDropdown">
           <button class="dropdown-btn">
             <img src="/src/assets/svg/user.png" alt="">
-            <span>{{ myUser }}</span>
+            <span> Olá {{ captalizeFistLetter(userName)}}, seja bem vindo!</span>
           </button>
           <div class="dropdown-content" v-if="dropdownVisible">
             <a href="#">My Account</a>
             <a class="logout" @click="logout">Logout</a>
           </div>
+        </div>
+        <div class="logo">
+          <img src="/src/assets/logo/qualiot.png" alt="">
         </div>
       <form class="search-form">
         <input type="search" placeholder="Search" class="search-input" />
@@ -20,33 +23,24 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
+const userEmail = ref('');
+const userName = ref('');
 
-const getUser = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser) {
-    try {
-      const user = fetch('http://localhost:8080/user/login', {
-        method: 'GET',
-      })
-      const parsedUser = JSON.parse(storedUser);
-      return parsedUser.name || "Usuário"; 
-    } catch (error) {
-      console.error('Erro ao converter string para objeto:', error);
-      return "Usuário";
-    }
-  }
-  return "Usuário";
+function captalizeFistLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
 
-};
-
-const myUser = ref(getUser());
+onMounted(() => {
+  userEmail.value = localStorage.getItem('userEmail') || 'Visitante';
+  userName.value = localStorage.getItem('userName') || 'Visitante';
+});
 
 watch(route, (newRoute) => {
   isLogin.value = newRoute.path === '/';
@@ -69,17 +63,27 @@ span {
   margin-left: 20px;
 }
 .header {
+  height: auto;
   box-sizing: inherit;
-  background-color: #f8f9fa;
+  background-color: #eaeaea;
 }
 
 .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   max-width: 1920px;
 }
-
+.logo {
+  margin-left: 1000px;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  img {
+    height: 200px;
+    width: 200px;
+  }
+}
 .dropdown {
   position: relative;
 }

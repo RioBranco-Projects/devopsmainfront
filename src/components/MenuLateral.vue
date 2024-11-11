@@ -52,10 +52,8 @@ import { RouterLink } from 'vue-router';
 </script>
 <style scoped>
 .menu-lateral {
-  display: flex;
-  box-sizing: border-box;
   z-index: 1;
-  height: 94vh;
+  height: auto;
   gap: 10px;
   flex-direction: column;
   width: auto;
