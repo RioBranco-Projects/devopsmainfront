@@ -27,7 +27,7 @@
           />
         </div>
 
-        <button type="submit" class="login-button">Entrar</button>
+        <button type="submit" onclick="handerleLogin" class="login-button">Entrar</button>
       </form>
 
       <p class="register-link">
