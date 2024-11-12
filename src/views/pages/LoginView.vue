@@ -49,37 +49,18 @@ const mensagemErro = ref('');
 const email = ref('');
 const password = ref('');
 
-const handleLogin = async () => {
-  try {
-    const response = await fetch('http://localhost:8081/user/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-      }),
-    });
+const handleLogin = () => {
+  // Verifica se o e-mail e senha estão no localStorage
+  const storedEmail = localStorage.getItem('userEmail');
+  const storedPassword = localStorage.getItem('userPassword');
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      mensagemErro.value = errorData.msg || 'Erro ao fazer login';
-      return;
-    }
-    else {
-      router.push('/home');
-    }
-
-    const user = await response.json();
-    localStorage.getItem('userEmail', user.email);
-    localStorage.getItem('userName', user.name);
-    console.log(localStorage.getItem('userEmail'));
-    console.log(localStorage.getItem('userName'));
-
-  } catch (error) {
-    console.error('Erro ao fazer login:', error.message);
-    mensagemErro.value = 'Erro de conexão. Verifique sua rede.';
+  if (storedEmail === email.value && storedPassword === password.value) {
+    // Se as credenciais forem válidas, redireciona para a home
+    localStorage.setItem('userLoggedIn', 'true');
+    router.push('/home');
+  } else {
+    // Se as credenciais forem inválidas, exibe uma mensagem de erro
+    mensagemErro.value = 'Email ou senha inválidos';
   }
 };
 

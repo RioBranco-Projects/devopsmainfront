@@ -59,42 +59,22 @@ const name = ref('');
 const email = ref('');
 const password = ref('');
 
-const handleRegister = async () => {
-  try {
-    const response = await fetch('http://localhost:8081/user/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        nome: name.value,
-        email: email.value,
-        password: password.value,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Erro ao registrar:', errorData);
-      alert(`Erro: ${errorData.msg || 'Erro ao registrar'}`);
-      return;
-    }
-    else {
-      router.push('/home'); 
-      const data = await response.json();
-      console.log('Registro bem-sucedido:', data);
-      alert('Registro realizado com sucesso!');
-      localStorage.setItem('userEmail', email.value);
-      localStorage.setItem('userName', name.value);
-      console.log(localStorage.getItem('userEmail'));
-      console.log(localStorage.getItem('userName'));
-    }
-
-  } catch (error) {
-    console.error('Erro de rede:', error);
-    alert('Erro de conexão. Verifique sua rede.');
+const handleRegister = () => {
+  // Verifica se já existe um usuário com o mesmo email no localStorage
+  const storedEmail = localStorage.getItem('userEmail');
+  if (storedEmail) {
+    alert('Já existe uma conta com esse email');
+    return;
   }
+
+  // Salva as informações do usuário no localStorage
+  localStorage.setItem('userEmail', email.value);
+  localStorage.setItem('userPassword', password.value);
+  localStorage.setItem('userName', name.value);
+
+  // Redireciona para a página de login
+  alert('Registro realizado com sucesso!');
+  router.push('/');
 };
 </script>
 

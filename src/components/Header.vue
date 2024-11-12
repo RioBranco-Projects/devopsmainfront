@@ -40,6 +40,9 @@ watch(route, (newRoute) => {
 });
 
 function logout() {
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userPassword');
+    localStorage.removeItem('userName');
     window.location.href = '/';
 }
 
