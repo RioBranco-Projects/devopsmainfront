@@ -4,7 +4,7 @@
         <div class="dropdown" @mouseover="toggleDropdown" @mouseleave="toggleDropdown">
           <button class="dropdown-btn">
             <img src="/src/assets/svg/user.png" alt="">
-            <span> Olá {{ captalizeFistLetter(userName)}}, seja bem vindo!</span>
+            <span> Olá {{ captalizeFistLetter(userName)}}</span>
           </button>
           <div class="dropdown-content" v-if="dropdownVisible">
             <a href="#">My Account</a>
@@ -14,10 +14,6 @@
         <div class="logo">
           <img src="/src/assets/logo/qualiot.png" alt="">
         </div>
-      <form class="search-form">
-        <input type="search" placeholder="Search" class="search-input" />
-        <button type="submit" class="search-button">Search</button>
-      </form>
     </div>
   </header>
 </template>
@@ -59,13 +55,13 @@ span {
 .header {
   height: auto;
   box-sizing: inherit;
-  background-color: #eaeaea;
+  background-color: #bae2fc;
 }
 
 .container {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   max-width: 1920px;
 }
 .logo {
@@ -73,6 +69,7 @@ span {
   display: flex;
   align-items: center;
   height: 20px;
+  transition: calc(.3s);
   img {
     height: 200px;
     width: 200px;
@@ -89,6 +86,7 @@ span {
   background: none;
   border: none;
   font-size: 25px;
+  font-weight: bolder;
   color: #000;
   transition: calc(.2s);
   cursor: pointer;
@@ -123,6 +121,7 @@ span {
 .dropdown-content a {
   display: block;
   padding: 10px;
+  font-weight: bolder;
   text-decoration: none;
   color: #000;
 }
@@ -131,32 +130,4 @@ span {
   background-color: #f1f1f1;
 }
 
-/* Estilos do Formulário de Busca */
-.search-form {
-  display: flex;
-  align-items: center;
-}
-
-.search-input {
-  padding: 5px 10px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  outline: none;
-}
-
-.search-button {
-  padding: 5px 10px;
-  border: 1px solid #3389CE;
-  background-color: #fff;
-  color: #3389CE;
-  border-radius: 4px;
-  margin-left: 5px;
-  cursor: pointer;
-  transition: 300ms;
-}
-
-.search-button:hover {
-  background-color: #3389CE;
-  color: #fff;
-}
 </style>

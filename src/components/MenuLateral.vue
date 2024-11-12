@@ -1,14 +1,8 @@
 <template>
     <div class="menu-lateral" >
 
+      
       <RouterLink to="/home">
-        <div class="label">
-            <img src="../assets/svg/home.png" alt="">
-            <p>Resumo</p>
-        </div>
-      </RouterLink>
-
-      <RouterLink to="/produtos">
         <div class="label">
           <img src="../assets/svg/produtos.png" alt=""> 
           <p>Produtos</p>
@@ -29,6 +23,12 @@
           <p>Gráficos</p>
         </div>
       </RouterLink>
+        <RouterLink to="/produtos">
+          <div class="label">
+              <img src="../assets/svg/home.png" alt="">
+              <p>Resumo</p>
+          </div>
+        </RouterLink>
 
     </div>
 </template>
@@ -49,7 +49,7 @@ import { RouterLink } from 'vue-router';
 
 a {
   text-decoration: none;
-  color: #000;
+  color: #ffffff;
   font-weight: bold;
   transition: calc(.3s);
 }
@@ -78,6 +78,6 @@ a {
 }
 
 .label:hover p {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 </style>

@@ -132,7 +132,7 @@ html, body {
   gap: 10px;
   flex-direction: column;
   padding: 20px;
-  width: 700px;
+  width: 800px;
   border-radius: 15px;
   height: 100%;
   box-sizing: border-box;
@@ -219,7 +219,8 @@ input[type=number] {
   border: none;
   background-color: #348ACF;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: bolder;
+  color: white;
   cursor: pointer;
   transition: calc(.3s);
 }
@@ -227,7 +228,6 @@ input[type=number] {
 .botao button:hover {
   background-color: #0e66af;
   transform: scale(1.025);
-  color: white;
 }
 
 .box, .box2 {
@@ -235,7 +235,7 @@ input[type=number] {
   background-color: #ededed;
   padding: 15px;
   border-radius: 10px;
-  max-width: 700px;
+  max-width: 800px;
   margin: 10px 0;
 }
 

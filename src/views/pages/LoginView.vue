@@ -92,7 +92,7 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f2f2f2;
+  background-color: #c2eeff;
 }
 
 .login-container {

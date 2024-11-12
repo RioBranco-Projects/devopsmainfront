@@ -9,9 +9,7 @@
         @click="setActiveTab(index + 1)">
         {{ tab.title }}
       </button>
-      <div class="inativar-tab">
-        <button @click="inativarAbaAtual">Inativar aba atual</button>
-      </div>
+
     </div>
 
     <div class="box">
@@ -103,6 +101,14 @@
         </div>
       </div>
     </div>
+    <div class="buttons">
+      <div class="inativar-tab">
+        <button @click="inativarAbaAtual">Inativar aba atual</button>
+      </div>
+      <div class="reativar-tab">
+        <button @click="reativarAbaAnterior">Reativar aba anterior</button>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -127,6 +133,13 @@ function calcularMediaPonderada(notas) {
 function setMediaPonderada(index, media) {
   mediaPorAba.value[index] = media;
   localStorage.setItem('mediaPorAba', JSON.stringify(mediaPorAba.value));
+
+  // Calcule a nova média ponderada ao atualizar a aba
+  const notas = mediaPorAba.value.map(item => parseFloat(item) || 0);
+  const mediaCalculada = calcularMediaPonderada(notas);
+  
+  // Atualize a média final
+  mediaFinal.value = mediaCalculada;
 }
 const initialTabs = [
   {
@@ -160,6 +173,24 @@ const initialTabs = [
 ];
 const tabs = ref(initialTabs); 
 
+function reativarAbaAnterior (index) {
+  const currentTab = activeIndex.value - 1;
+
+  // Procura uma aba anterior que esteja inativa
+  let previousInactiveIndex = currentTab - 1;
+  while (previousInactiveIndex >= 0 && !tabs.value[previousInactiveIndex].inactive) {
+    previousInactiveIndex--;
+  }
+
+  if (previousInactiveIndex >= 0) {
+    // Reativa a aba anterior
+    tabs.value[previousInactiveIndex].inactive = false;
+    activeIndex.value = previousInactiveIndex + 1;
+
+    // Atualiza o localStorage, se necessário
+    localStorage.setItem('mediaPorAba', JSON.stringify(mediaPorAba.value));
+  }
+}
 function inativarAbaAtual() {
   const currentTab = activeIndex.value - 1;
 
@@ -227,7 +258,7 @@ onMounted(() => {
 .formulario {
   display: flex;
   width: 100%;
-  height: 87vh;
+  height: 80vh;
   position: relative;
   overflow: hidden;
 }
@@ -258,11 +289,34 @@ onMounted(() => {
   cursor: default;
   font-size: 18px;
 }
-
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.inativar-tab {
+  display: flex;
+}
+.reativar-tab button {
+  border: none;
+  background-color: #85fc85;
+  padding: 10px;
+  color: white;
+  font-size: 18px;
+  height: 50px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: calc(.3s);
+}
+.reativar-tab button:hover {
+  background-color: #54c110;
+}
 .inativar-tab button {
   border: none;
-  background-color: #ff8080;
+  background-color: #ff9f9f;
   padding: 10px;
+  color: white;
   font-size: 18px;
   height: 50px;
   border-radius: 10px;
@@ -271,7 +325,7 @@ onMounted(() => {
   transition: calc(.3s);
 }
 .inativar-tab button:hover {
-  background-color: #ff4d4d;
+  background-color: #ff5050;
 }
 
 .box {

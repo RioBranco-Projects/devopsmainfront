@@ -20,13 +20,13 @@ const router = createRouter({
       children: [
         {
           path: "/home",
-          name: "dashboard",
-          component: () => import("../views/DashboardView.vue"),
+          name: "produtos",
+          component: () => import("../views/ProdutoView.vue"),
         },
         {
           path: "/produtos",
-          name: "produtos",
-          component: () => import("../views/ProdutoView.vue"),
+          name: "dashboard",
+          component: () => import("../views/DashboardView.vue"),
         },
         {
           path: "/graficos",
