@@ -53,6 +53,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import API from '../../api/api';
 
 const router = useRouter();
 const name = ref('');
@@ -60,21 +61,17 @@ const email = ref('');
 const password = ref('');
 
 const handleRegister = () => {
-  // Verifica se já existe um usuário com o mesmo email no localStorage
-  const storedEmail = localStorage.getItem('userEmail');
-  if (storedEmail) {
-    alert('Já existe uma conta com esse email');
-    return;
+  const response = API.registerUser(email.value, password.value);
+
+  if (response.success) {
+    localStorage.setItem('userName', name.value);
+    router.push('/'); // Redireciona para a página de login
+  } else {
+    mensagemErro.value = response.error;
+    setTimeout(() => {
+      mensagemErro.value = '';
+    }, 2000);
   }
-
-  // Salva as informações do usuário no localStorage
-  localStorage.setItem('userEmail', email.value);
-  localStorage.setItem('userPassword', password.value);
-  localStorage.setItem('userName', name.value);
-
-  // Redireciona para a página de login
-  alert('Registro realizado com sucesso!');
-  router.push('/');
 };
 </script>
 

@@ -1,8 +1,6 @@
 <template>
     <div class="menu-lateral" >
-
-      
-      <RouterLink to="/home">
+      <RouterLink to="/produtos">
         <div class="label">
           <img src="../assets/svg/produtos.png" alt=""> 
           <p>Produtos</p>

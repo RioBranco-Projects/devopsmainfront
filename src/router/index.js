@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import API from "@/api/api";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,12 +20,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: "/home",
+          path: "/produtos",
           name: "produtos",
           component: () => import("../views/ProdutoView.vue"),
         },
         {
-          path: "/produtos",
+          path: "/dashboard",
           name: "dashboard",
           component: () => import("../views/DashboardView.vue"),
         },
@@ -43,16 +44,11 @@ const router = createRouter({
   ],
 });
 
-function isAuthenticated() {
-  return !!localStorage.getItem("user"); // Verifica se o usuário está autenticado
-}
-
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated()) {
+  if (to.meta.requiresAuth && !API.isAuthenticated()) {
     next("/");
   } else {
     next();
   }
 });
-
 export default router;

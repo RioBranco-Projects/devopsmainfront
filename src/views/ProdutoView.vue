@@ -35,7 +35,7 @@
                 <h2>{{ capitalizeFirstLetter(prod.nome) }}</h2>
                 <p>{{ prod.descricao }}</p>
                 <p><strong>Nota:</strong> {{ getNotaMedia(prod.nome) }}</p>
-                <button @click="removerProduto(index)" class="btn-remover">Remover</button>
+                <button @click="confirmarRemocao(index)" class="btn-remover">Remover</button>
               </div>
             </div>
           </div>
@@ -65,15 +65,22 @@ onMounted(() => {
 
 const cadastrarProduto = () => {
   if (produto.value.nome && produto.value.descricao) {
+    // Verifica se o produto já existe na lista
+    const produtoExiste = produtos.value.some((p) => p.nome.toLowerCase() === produto.value.nome.toLowerCase());
+    
+    if (produtoExiste) {
+      alert('Produto já cadastrado!');
+      return;
+    }
+
     produtos.value.push({ ...produto.value });
     localStorage.setItem('produtos', JSON.stringify(produtos.value));
     
     alert('Produto cadastrado com sucesso!');
-    
     produto.value = { nome: '', descricao: '' };
   } else {
     alert('Por favor, preencha todos os campos obrigatórios.');
-  }
+  } 
 };
 
 const getNotaMedia = (nomeProduto) => {
@@ -83,6 +90,13 @@ const getNotaMedia = (nomeProduto) => {
 
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
+// Função para confirmar a remoção do produto
+const confirmarRemocao = (index) => {
+  if (confirm("Tem certeza que deseja remover este produto?")) {
+    removerProduto(index);
+  }
 };
 
 // Função para remover um produto da lista e do localStorage

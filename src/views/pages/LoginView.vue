@@ -4,6 +4,7 @@
     <img src="/src/assets/logo/qualiot.png" alt="">
     <div class="login-container">
       <h2>Login</h2>
+
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="email">Email</label>
@@ -26,14 +27,11 @@
             required
           />
         </div>
-
-        <button type="submit" onclick="handerleLogin" class="login-button">Entrar</button>
+        <button type="submit" class="login-button">Entrar</button>
       </form>
-
       <p class="register-link">
         Não tem uma conta? <router-link to="/register">Registre-se aqui</router-link>
       </p>
-
       <p class="error-message">{{ mensagemErro }}</p>
     </div>
   </div>
@@ -43,27 +41,27 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import API from '../../api/api';
 
 const router = useRouter();
 const mensagemErro = ref('');
 const email = ref('');
 const password = ref('');
 
-const handleLogin = () => {
-  // Verifica se o e-mail e senha estão no localStorage
-  const storedEmail = localStorage.getItem('userEmail');
-  const storedPassword = localStorage.getItem('userPassword');
+const handleLogin = async () => {
+  const response = API.loginUser(email.value, password.value);
 
-  if (storedEmail === email.value && storedPassword === password.value) {
-    // Se as credenciais forem válidas, redireciona para a home
-    localStorage.setItem('userLoggedIn', 'true');
-    router.push('/home');
+  if (response.success) {
+    const userName = localStorage.getItem('userName');
+    localStorage.setItem('currentUser', userName); // Armazena o usuário atual
+    router.push("/produtos"); // Redireciona para a rota inicial
   } else {
-    // Se as credenciais forem inválidas, exibe uma mensagem de erro
-    mensagemErro.value = 'Email ou senha inválidos';
+    mensagemErro.value = response.error;
+    setTimeout(() => {
+      mensagemErro.value = "";
+    }, 2000);
   }
 };
-
 </script>
 
 

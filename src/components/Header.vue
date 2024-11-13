@@ -26,7 +26,7 @@ const route = useRoute();
 const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
-const userName = ref(localStorage.getItem('userName') || 'Visitante');
+const userName = ref(localStorage.getItem('currentUser') || 'Visitante');
 
 function captalizeFistLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -35,15 +35,12 @@ function captalizeFistLetter(string) {
 watch(route, (newRoute) => {
   isLogin.value = newRoute.path === '/';
   isRegister.value = newRoute.path === '/register';
-
-  console.log(`isLogin: ${isLogin.value}, isRegister: ${isRegister.value}`);
 });
-
 function logout() {
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userPassword');
-    localStorage.removeItem('userName');
-    window.location.href = '/';
+  // Remove as informações de autenticação e redireciona
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('isAuthenticated'); // ou qualquer chave de autenticação que você usa
+  window.location.replace('/');
 }
 
 function toggleDropdown() {
