@@ -1,6 +1,5 @@
 <template>
   <Transition name="fade-horizontal">
-
   <div class="register-page">
     <div class="register-container">
       <h2>Registre-se</h2>
@@ -15,7 +14,6 @@
             required
           />
         </div>
-
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -26,7 +24,6 @@
             required
           />
         </div>
-
         <div class="form-group">
           <label for="password">Senha</label>
           <input
@@ -37,10 +34,8 @@
             required
           />
         </div>
-
         <button type="submit" class="register-button">Registrar</button>
       </form>
-
       <p class="login-link">
         Já tem uma conta? <router-link to="/">Faça login aqui</router-link>
       </p>
@@ -53,13 +48,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
 const name = ref('');
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
-
 const handleRegister = () => {
   if (name.value && email.value && password.value) {
     const user = {
@@ -75,17 +68,21 @@ const handleRegister = () => {
   }
 };
 </script>
-
-
-
 <style scoped>
-/* Estilo básico para a página de registro */
 .register-page {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
   background-color: #f2f2f2;
+  @media (max-width: 768px) {
+    padding: 20px;
+    flex-direction: column-reverse;
+    height: auto;
+    img {
+      width: 250px;
+    }
+  }
 }
 
 .register-container {
@@ -147,29 +144,24 @@ input[type="password"] {
   cursor: pointer;
   transition: calc(.3s);
 }
-
 .register-button:hover {
   background-color: #0056b3;
 }
 .fade-horizontal-enter-active, .fade-horizontal-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-
 .fade-horizontal-enter-from {
   opacity: 0;
   transform: translateX(-20px);
 }
-
 .fade-horizontal-enter-to {
   opacity: 1;
   transform: translateX(0);
 }
-
 .fade-horizontal-leave-from {
   opacity: 1;
   transform: translateX(0);
 }
-
 .fade-horizontal-leave-to {
   opacity: 0;
   transform: translateX(20px);

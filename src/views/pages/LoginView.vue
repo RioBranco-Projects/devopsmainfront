@@ -74,6 +74,13 @@ const handleLogin = () => {
   justify-content: center;
   height: 100vh;
   background-color: #c2eeff;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 20px;
+    img {
+      width: 250px;
+    }
+  }
 }
 
 .login-container {

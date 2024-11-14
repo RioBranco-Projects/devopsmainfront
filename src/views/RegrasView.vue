@@ -114,14 +114,23 @@
         </Transition>
       </div>
       <div v-if="produtos.length" class="produto-box">
-        <h2>Produto Cadastrado pelo usuário {{ userName }} </h2>
-        <div v-for="(produto, index) in produtos" :key="index" class="produto-detalhes">
-          <h3>{{ produto.nome }}</h3>
-          <p>{{ produto.descricao }}</p>
-          <p> A média final do produto foi: {{ mediaFinal }}</p>
-          <p :class="proficiencyClass"> Proficiência do produto: {{ nivelProeficiencia }} </p>
+        <h2>Produtos Cadastrados pelo {{ userName }}</h2>
+        
+        <!-- Option list for selecting a product -->
+        <select v-model="selectedProdutoIndex">
+          <option v-for="(produto, index) in produtos" :key="index" :value="index">
+            {{ produto.nome }}
+          </option>
+        </select>
+
+        <!-- Display selected product details -->
+        <div v-if="selectedProdutoIndex !== null" class="produto-detalhes">
+          <h3>{{ produtos[selectedProdutoIndex].nome }}</h3>
+          <p>{{ produtos[selectedProdutoIndex].descricao }}</p>
+          <p>A média final do produto foi: {{ mediaFinal }}</p>
+          <p :class="proficiencyClass">Proficiência do produto: {{ nivelProeficiencia }}</p>
         </div>
-      </div>
+      </div> <!-- produto-box -->
     </div>
     <div class="buttons">
       <div class="inativar-tab">
@@ -142,6 +151,8 @@ const userData = JSON.parse(localStorage.getItem('userName') || '{}');
 const userName = ref(userData.name || 'Visitante');
 
 const activeIndex = ref(1);
+const selectedProdutoIndex = ref(null);
+
 const produtos = ref([]);
 const mediaPorAba = ref(Array(7).fill(''));
 
@@ -264,8 +275,9 @@ onMounted(() => {
   const produtosSalvos = localStorage.getItem('produtos');
   if (produtosSalvos) {
     produtos.value = JSON.parse(produtosSalvos);
+    selectedProdutoIndex.value = produtos.value.length > 0 ? 0 : null;
   }
-  
+
   const mediasSalvas = localStorage.getItem('mediaPorAba');
   if (mediasSalvas) {
     mediaPorAba.value = JSON.parse(mediasSalvas);
@@ -392,7 +404,31 @@ onMounted(() => {
   text-align: center;
   padding: 20px;
   width: 1200px;
+  margin: 0 auto;
   height: auto;
+}
+
+.produto-box h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+select {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
+  background-color: #ececec;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+select:hover {
+  border-color: #0088ff;
 }
 
 .produto-detalhes {

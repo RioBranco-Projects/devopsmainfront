@@ -34,7 +34,10 @@ import { RouterLink } from 'vue-router';
   flex-direction: column;
   width: auto;
   background: linear-gradient(to right,#3389CE, #3389CE);
-  transition: calc(.3s)
+  transition: calc(.3s);
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 a {
