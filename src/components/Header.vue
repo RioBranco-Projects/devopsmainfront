@@ -35,7 +35,7 @@ function captalizeFistLetter(string) {
 }
 
 watch(route, (newRoute) => {
-  isLogin.value = newRoute.path === '/login';
+  isLogin.value = newRoute.path === '/';
   isRegister.value = newRoute.path === '/register';
 });
 function logout() {

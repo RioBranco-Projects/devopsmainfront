@@ -6,11 +6,9 @@ import MenuLateral from '../components/MenuLateral.vue';
 <template>
   <section class="home">
     <MenuLateral/>
-    <Transition name="router" mode="fade">
       <div class="dashboard">
         <RouterView />
       </div>
-    </Transition>
   </section>
 </template>
 
