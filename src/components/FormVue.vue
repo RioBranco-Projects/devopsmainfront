@@ -335,7 +335,7 @@ input[type=number] {
 }
 
 .box, .box2 {
-  width: 100%;
+  width: auto;
   background-color: #ededed;
   padding: 10px;
   border-radius: 10px;
