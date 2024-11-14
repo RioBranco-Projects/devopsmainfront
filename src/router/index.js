@@ -4,7 +4,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/login",
+      path: "/",
       name: "login",
       component: () => import("../views/pages/LoginView.vue"),
     },
@@ -14,12 +14,12 @@ const router = createRouter({
       component: () => import("../views/pages/RegisterView.vue"),
     },
     {
-      path: "/",
+      path: "/home",
       component: () => import("../views/HomeView.vue"),
       meta: { requiresAuth: true },
       children: [
         {
-          path: "/",
+          path: "/home",
           name: "produtos",
           component: () => import("../views/ProdutoView.vue"),
         },

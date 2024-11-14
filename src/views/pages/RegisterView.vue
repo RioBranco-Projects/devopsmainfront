@@ -69,7 +69,7 @@ const handleRegister = () => {
     };
     localStorage.setItem("userName", JSON.stringify(user));
     localStorage.setItem("isAuthenticated", "true");
-    router.push('/login'); 
+    router.push('/'); 
   } else {
     errorMessage.value = 'Por favor, preencha todos os campos.';
   }

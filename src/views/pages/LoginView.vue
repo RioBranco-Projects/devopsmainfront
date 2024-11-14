@@ -55,7 +55,7 @@ const handleLogin = () => {
     localStorage.setItem("isAuthenticated", "true");
     sucessMessage.value = 'Login realizado com sucesso!';
     setTimeout(() => {
-      router.push('/produtos');
+      router.push('/home');
     }, 1300)
   } else {
     errorMessage.value = 'Email ou senha incorretos.';
