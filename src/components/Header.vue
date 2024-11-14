@@ -40,7 +40,7 @@ watch(route, (newRoute) => {
 });
 function logout() {
 
-  window.location.replace('/login');
+  window.location.replace('/');
 }
 
 function toggleDropdown() {
