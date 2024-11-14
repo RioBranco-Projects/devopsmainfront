@@ -15,26 +15,31 @@
       <p class="avaliacao">{{ AvaliacaoSalva }}</p>
       
       <!-- Critérios iniciais -->
-      <div class="form-group">
-        <label for="text1">{{ q1 }}: <p>{{ p1 }}</p> (peso: {{ pesos[0] }}):</label>
-        <input type="number" :placeholder="d1" id="text1" v-model.number="notas[0]" required>
+      <div class="form-group" v-for="(nota, index) in notas" :key="index">
+        <label :for="'text' + (index + 1)">
+          {{ index === 0 ? q1 : index === 1 ? q2 : q3 }}:
+          <p>{{ index === 0 ? p1 : index === 1 ? p2 : p3 }}</p> (peso: {{ pesos[index] }})
+        </label>
+        <input type="number" :placeholder="placeholders[index]" :id="'text' + (index + 1)" v-model.number="notas[index]" required>
       </div>
-      <div class="form-group">
-        <label for="text2">{{ q2 }}: <p>{{ p2 }}</p>  (peso: {{ pesos[1] }}):</label>
-        <input type="number" :placeholder="placeholders[1]" id="text2" v-model.number="notas[1]" required>
-      </div>
-      <div class="form-group">
-        <label for="text3">{{ q3 }}: <p>{{ p3 }}</p>  (peso: {{ pesos[2] }}):</label>
-        <input type="number" :placeholder="placeholders[2]" id="text3" v-model.number="notas[2]" required>
+      
+      <!-- Campo de justificativa fora do form-group -->
+      <div v-for="(justificativa, index) in justificativas" :key="'justificativa-' + index" class="justification-box">
+        <textarea v-model="justificativas[index]" :placeholder="'Justificativa para ' + (index + 1)"></textarea>
       </div>
 
       <!-- Critérios adicionais com opção de exclusão -->
       <div v-for="(criterio, index) in criteriosAdicionais" :key="index" class="form-group">
         <label :for="'text' + (index + 4)">{{ criterio.pergunta }}: (peso: {{ pesos[index + 3] }}):</label>
         <div class="input-remove-wrapper">
-          <button type="button" @click="removerCriterio(index)" class="remove-button">Remover critério</button>
           <input type="number" :placeholder="criterio.placeholder" :id="'text' + (index + 4)" v-model.number="criterio.nota" required>
+          <button type="button" @click="removerCriterio(index)" class="remove-button">Remover critério</button>
         </div>
+      </div>
+
+      <!-- Campo de justificativa para critérios adicionais fora do form-group -->
+      <div v-for="(criterio, index) in criteriosAdicionais" :key="'justificacao-adicional-' + index" class="justification-box">
+        <textarea v-model="criterio.justification" :placeholder="'Justificativa para ' + criterio.pergunta"></textarea>
       </div>
 
       <!-- Input para adicionar nova pergunta -->
@@ -61,6 +66,7 @@ import MediaCalculator from './minicomponents/MediaCalculator.vue';
 
 const userData = JSON.parse(localStorage.getItem('userName') || '{}');
 const userName = ref(userData.name || 'Visitante');
+const justificativas = ref(['', '', '']); // Justificativas para os critérios iniciais
 
 const props = defineProps({
   mediaPonderada: Number,
@@ -128,7 +134,7 @@ function cancelarPergunta() {
 
 function removerCriterio(index) {
   criteriosAdicionais.value.splice(index, 1);
-  recalcularPesos(); // Recalcula os pesos ao remover um critério
+  recalcularPesos(); 
   if (criteriosAdicionais.value.length < 2) {
     showNewQuestionInput.value = false;
   }
@@ -141,20 +147,21 @@ function salvarInput() {
     AvaliacaoSalva.value = "Cada nota deve ser entre 0 e 10.";
     setTimeout(() => { AvaliacaoSalva.value = ""; }, 1500);
   } else {
-    const media = calcularMediaPonderada(notasCompletas.value); // Calcula a média ponderada
+    const media = calcularMediaPonderada(notasCompletas.value);
     AvaliacaoSalva.value = "Avaliação feita com sucesso!";
     setTimeout(() => { AvaliacaoSalva.value = ""; }, 2000);
-    emit('atualizar-media', media); // Emite a média calculada ao componente pai
+    emit('atualizar-media', media);
 
-    // Armazenar as avaliações no localStorage
+    // Armazenar as avaliações no localStorage, incluindo justificativas
     const avaliacoes = [
-      { pergunta: q1, nota: notas.value[0], peso: pesos.value[0] },
-      { pergunta: q2, nota: notas.value[1], peso: pesos.value[1] },
-      { pergunta: q3, nota: notas.value[2], peso: pesos.value[2] },
+      { pergunta: q1, nota: notas.value[0], peso: pesos.value[0], justificativa: justificativas.value[0] },
+      { pergunta: q2, nota: notas.value[1], peso: pesos.value[1], justificativa: justificativas.value[1] },
+      { pergunta: q3, nota: notas.value[2], peso: pesos.value[2], justificativa: justificativas.value[2] },
       ...criteriosAdicionais.value.map((criterio, index) => ({
         pergunta: criterio.pergunta,
         nota: criterio.nota,
-        peso: pesos.value[index + 3]
+        peso: pesos.value[index + 3],
+        justificativa: criterio.justification
       }))
     ];
 
@@ -185,7 +192,7 @@ html, body {
   display: flex;
   gap: 10px;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px;
   width: 800px;
   border-radius: 15px;
   height: 100%;
@@ -201,8 +208,8 @@ html, body {
 }
 
 .title img {
-  width: 90px;
-  height: 90px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -330,7 +337,7 @@ input[type=number] {
 .box, .box2 {
   width: 100%;
   background-color: #ededed;
-  padding: 15px;
+  padding: 10px;
   border-radius: 10px;
   max-width: 800px;
   margin: 10px 0;
@@ -341,5 +348,32 @@ input[type=number] {
   font-size: 20px;
   text-align: center;
   font-weight: bolder;
+}
+.form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.justification-box {
+  margin-bottom: 20px;
+}
+
+.justification-box textarea {
+  width: 100%;
+  max-width: 760px;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical;
+  background-color: #f9f9f9;
+}
+
+.justification-box textarea:focus {
+  background-color: #fff;
+  border-color: #348ACF;
+  outline: none;
 }
 </style>
