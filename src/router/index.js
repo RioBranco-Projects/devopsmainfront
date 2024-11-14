@@ -28,6 +28,11 @@ const router = createRouter({
           name: "comparar",
           component: () => import("../views/RegrasView.vue"),
         },
+        {
+          path: "/relatorio",
+          name: "relatorio",
+          component: () => import("../views/RelatorioView.vue"),
+        }
       ],
     },
   ],

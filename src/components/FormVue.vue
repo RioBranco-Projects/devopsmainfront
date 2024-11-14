@@ -16,21 +16,21 @@
       
       <!-- Critérios iniciais -->
       <div class="form-group">
-        <label for="text1">{{ q1 }} (peso: {{ pesos[0] }}):</label>
+        <label for="text1">{{ q1 }}: <p>{{ p1 }}</p> (peso: {{ pesos[0] }}):</label>
         <input type="number" :placeholder="d1" id="text1" v-model.number="notas[0]" required>
       </div>
       <div class="form-group">
-        <label for="text2">{{ q2 }} (peso: {{ pesos[1] }}):</label>
+        <label for="text2">{{ q2 }}: <p>{{ p2 }}</p>  (peso: {{ pesos[1] }}):</label>
         <input type="number" :placeholder="placeholders[1]" id="text2" v-model.number="notas[1]" required>
       </div>
       <div class="form-group">
-        <label for="text3">{{ q3 }} (peso: {{ pesos[2] }}):</label>
+        <label for="text3">{{ q3 }}: <p>{{ p3 }}</p>  (peso: {{ pesos[2] }}):</label>
         <input type="number" :placeholder="placeholders[2]" id="text3" v-model.number="notas[2]" required>
       </div>
 
       <!-- Critérios adicionais com opção de exclusão -->
       <div v-for="(criterio, index) in criteriosAdicionais" :key="index" class="form-group">
-        <label :for="'text' + (index + 4)">{{ criterio.pergunta }} (peso: {{ pesos[index + 3] }}):</label>
+        <label :for="'text' + (index + 4)">{{ criterio.pergunta }}: (peso: {{ pesos[index + 3] }}):</label>
         <div class="input-remove-wrapper">
           <button type="button" @click="removerCriterio(index)" class="remove-button">Remover critério</button>
           <input type="number" :placeholder="criterio.placeholder" :id="'text' + (index + 4)" v-model.number="criterio.nota" required>
@@ -70,6 +70,9 @@ const props = defineProps({
   d1: String,
   d2: String,
   d3: String,
+  p1: String,
+  p2: String,
+  p3: String
 });
 
 const emit = defineEmits(['atualizar-media']);
@@ -142,8 +145,23 @@ function salvarInput() {
     AvaliacaoSalva.value = "Avaliação feita com sucesso!";
     setTimeout(() => { AvaliacaoSalva.value = ""; }, 2000);
     emit('atualizar-media', media); // Emite a média calculada ao componente pai
+
+    // Armazenar as avaliações no localStorage
+    const avaliacoes = [
+      { pergunta: q1, nota: notas.value[0], peso: pesos.value[0] },
+      { pergunta: q2, nota: notas.value[1], peso: pesos.value[1] },
+      { pergunta: q3, nota: notas.value[2], peso: pesos.value[2] },
+      ...criteriosAdicionais.value.map((criterio, index) => ({
+        pergunta: criterio.pergunta,
+        nota: criterio.nota,
+        peso: pesos.value[index + 3]
+      }))
+    ];
+
+    localStorage.setItem(`avaliacoes_${props.nomeProduto}_${props.abaIndex}`, JSON.stringify(avaliacoes));
   }
 }
+
 
 // Função para calcular a média ponderada com pesos dinâmicos
 function calcularMediaPonderada(notas) {
@@ -208,6 +226,12 @@ html, body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
+  p {
+    margin: 0;
+    width: 640px;
+    font-weight: bolder;
+    color: black;
+  }
 }
 
 .form-group label {

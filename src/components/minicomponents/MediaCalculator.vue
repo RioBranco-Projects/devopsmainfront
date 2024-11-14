@@ -4,12 +4,17 @@
     <div class="box3">
       <h1>A média das notas acima é:</h1>
       <span>{{ mediaCalculada }}</span>
+      <span> {{ proeficience }}</span>
     </div>
   </Transition>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+
+const proeficience = computed(() => {
+  
+})
 
 const props = defineProps({
   notas: {

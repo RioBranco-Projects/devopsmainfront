@@ -20,6 +20,9 @@
               q1="Identificação única"
               q2="Capacidade de atualização"
               q3="Consumo de energia"
+              p1="Qual é o identificador único do objeto IoT (por exemplo, número de série ou ID de dispositivo) e como ele é gerado e gerenciado?"
+              p2="O objeto IoT pode receber atualizações de firmware/software? Como o processo de atualização é gerenciado e seguro?"
+              p3="Quais são as expectativas de consumo de energia e vida útil da bateria do objeto IoT? Existem modos de economia de energia?"
               :mediaPonderada="mediaPorAba[0]"
               @atualizar-media="(media) => setMediaPonderada(0, media)"
             />
@@ -31,6 +34,9 @@
               q1="Tipos de sensores"
               q2="Precisão e calibração"
               q3="Resiliência Ambiental"
+              p1="Quais tipos de sensores são utilizados e para quais finalidades específicas?"
+              p2="Qual é a precisão necessária dos sensores e como a calibração é realizada e mantida?"
+              p3="Como os sensores lidam com variações ambientais como temperatura, umidade e interferências?"
               :mediaPonderada="mediaPorAba[1]"
               @atualizar-media="(media) => setMediaPonderada(1, media)"
             />
@@ -42,6 +48,9 @@
               q1="Protocolos de comunicação"
               q2="Gerenciamento de banda"
               q3="Estratégias de retransmissão"
+              p1="Quais protocolos de comunicação são suportados (por exemplo, MQTT, CoAP, HTTP, etc.) e por quê?"
+              p2="Como será gerenciado o uso da banda de rede, especialmente em ambientes com recursos limitados? Existem mecanismos de adaptação à variação da banda?"
+              p3="Existem mecanismos para garantir a entrega de dados em caso de falhas de transmissão?"
               :mediaPonderada="mediaPorAba[2]"
               @atualizar-media="(media) => setMediaPonderada(2, media)"
             />
@@ -53,6 +62,9 @@
               q1="Escalabilidade"
               q2="Recuperação de desastres"
               q3="Qualidade dos dados"
+              p1="Como a solução em nuvem lida com o aumento do número de dispositivos e do volume de dados?"
+              p2="Quais são os planos de recuperação de desastres e continuidade de negócios?"
+              p3="Como será garantida a qualidade dos dados armazenados? Quais os mecanismos de validação e limpeza dos dados?"
               :mediaPonderada="mediaPorAba[3]"
               @atualizar-media="(media) => setMediaPonderada(3, media)"
             />
@@ -64,6 +76,9 @@
               q1="Privacidade e proteção de dados"
               q2="Segurança da informação"
               q3="Gerenciamento de acesso e auditoria"
+              p1="Quais medidas são adotadas para garantir a coleta, o armazenamento e o uso seguros e transparentes dos dados pessoais dos usuários, incluindo o consentimento informado e o cumprimento dos direitos dos titulares dos dados?"
+              p2="Como o sistema protege as informações dos usuários contra acessos não autorizados, ataques cibernéticos e perda de dados, garantindo a confidencialidade, integridade e disponibilidade das informações?"
+              p3="Como o sistema controla o acesso às informações, atribui permissões aos usuários e garante a rastreabilidade das ações realizadas no sistema, visando a segurança e a conformidade?"
               :mediaPonderada="mediaPorAba[4]"
               @atualizar-media="(media) => setMediaPonderada(4, media)"
             />
@@ -75,6 +90,9 @@
               q1="Processamento de dados"
               q2="Insights acionáveis"
               q3="Visualização de dados"
+              p1="Como os dados são processados e analisados? Existem capacidades de processamento de borda (edge computing)?"
+              p2="Como os insights são extraídos dos dados e como eles podem ser utilizados para a tomada de decisões?"
+              p3="Quais ferramentas de visualização são utilizadas para representar os dados de forma compreensível para os usuários finais?"
               :mediaPonderada="mediaPorAba[5]"
               @atualizar-media="(media) => setMediaPonderada(5, media)"
             />
@@ -86,6 +104,9 @@
               q1="Experiência do usuário"
               q2="Acessibilidade"
               q3="Usabilidade"
+              p1="O sistema oferece uma experiência intuitiva, consistente e personalizada, guiando o usuário de forma clara e eficiente desde o início da interação?"
+              p2="O sistema é acessível a todos os usuários, independentemente de suas habilidades ou deficiências, garantindo igualdade de acesso e uso?"
+              p3="O sistema é fácil de aprender, usar e eficiente para realizar as tarefas desejadas, minimizando erros e maximizando a satisfação do usuário?"
               :mediaPonderada="mediaPorAba[6]"
               @atualizar-media="(media) => setMediaPonderada(6, media)"
             />
@@ -98,6 +119,7 @@
           <h3>{{ produto.nome }}</h3>
           <p>{{ produto.descricao }}</p>
           <p> A média final do produto foi: {{ mediaFinal }}</p>
+          <p :class="proficiencyClass"> Proficiência do produto: {{ nivelProeficiencia }} </p>
         </div>
       </div>
     </div>
@@ -115,33 +137,52 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import FormVue from '@/components/FormVue.vue';
+
 const userData = JSON.parse(localStorage.getItem('userName') || '{}');
 const userName = ref(userData.name || 'Visitante');
 
 const activeIndex = ref(1);
-const produtos = ref([]); 
-const mediaPorAba = ref(Array(7).fill('')); 
+const produtos = ref([]);
+const mediaPorAba = ref(Array(7).fill(''));
+
+// Computed para calcular a média final a partir das médias das abas
 const mediaFinal = computed(() => {
   const notasValidas = mediaPorAba.value.filter((nota) => nota !== '');
   const soma = notasValidas.reduce((acc, nota) => acc + parseFloat(nota), 0);
   return notasValidas.length > 0 ? (soma / notasValidas.length).toFixed(2) : '0.00';
 });
-function calcularMediaPonderada(notas) {
-  const pesos = [4, 3, 3]; 
-  const somaPesos = pesos.reduce((acc, peso) => acc + peso, 0);
-  const somaPonderada = notas.reduce((acc, nota, index) => acc + nota * pesos[index], 0);
-  return (somaPonderada / somaPesos).toFixed(2);
-}
+
+// Computed para calcular o nível de proficiência
+const nivelProeficiencia = computed(() => {
+  const media = parseFloat(mediaFinal.value);
+  if (media < 5) {
+    return 'Básico';
+  } else if (media <= 7) {
+    return 'Médio';
+  } else {
+    return 'Alto';
+  }
+});
+
+const proficiencyClass = computed(() => {
+  if (nivelProeficiencia.value === 'Básico') {
+    return 'proficiency-basic';
+  } else if (nivelProeficiencia.value === 'Médio') {
+    return 'proficiency-medium';
+  } else {
+    return 'proficiency-high';
+  }
+});
+
+
+// Função para configurar a média ponderada e salvar no localStorage
 function setMediaPonderada(index, media) {
   mediaPorAba.value[index] = media;
   localStorage.setItem('mediaPorAba', JSON.stringify(mediaPorAba.value));
 
-  // Calcule a nova média ponderada ao atualizar a aba
-  const notas = mediaPorAba.value.map(item => parseFloat(item) || 0);
-  const mediaCalculada = calcularMediaPonderada(notas);
-  
-  // Atualize a média final
-  mediaFinal.value = mediaCalculada;
+  // Atualizar média final e nível de proficiência no localStorage
+  localStorage.setItem('mediaFinal', JSON.stringify(mediaFinal.value));
+  localStorage.setItem('nivelProeficiencia', JSON.stringify(nivelProeficiencia.value));
 }
 const initialTabs = [
   {
@@ -348,8 +389,9 @@ onMounted(() => {
 .produto-box {
   position: relative;
   z-index: 1;
+  text-align: center;
   padding: 20px;
-  width: 900px;
+  width: 1200px;
   height: auto;
 }
 
@@ -357,7 +399,7 @@ onMounted(() => {
   background-color: #ccc;
   margin-bottom: 10px;
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   font-size: 30px;
 }
@@ -369,6 +411,19 @@ onMounted(() => {
 
 .produto-detalhes p {
   margin: 5px 0 0;
-  color: #666;
+}
+.proficiency-basic {
+  color: red;
+  font-weight: bold;
+}
+
+.proficiency-medium {
+  color: orange;
+  font-weight: bold;
+}
+
+.proficiency-high {
+  color: green;
+  font-weight: bold;
 }
 </style>

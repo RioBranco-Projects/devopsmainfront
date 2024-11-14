@@ -13,6 +13,12 @@
           <p>Avaliar produtos</p>
         </div>
       </RouterLink>
+      <RouterLink to="/relatorio">
+        <div class="label">
+          <img src="../assets/svg/icons/Aviso.png" alt="">
+          <p>Verificar relatório</p>
+        </div>
+      </RouterLink>
 
     </div>
 </template>
