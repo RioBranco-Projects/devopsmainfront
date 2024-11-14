@@ -115,7 +115,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import FormVue from '@/components/FormVue.vue';
-const userName = ref(localStorage.getItem('userName') || 'Visitante');
+const userData = JSON.parse(localStorage.getItem('userName') || '{}');
+const userName = ref(userData.name || 'Visitante');
+
 const activeIndex = ref(1);
 const produtos = ref([]); 
 const mediaPorAba = ref(Array(7).fill('')); 

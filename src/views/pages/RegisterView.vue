@@ -53,24 +53,25 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import API from '../../api/api';
 
 const router = useRouter();
 const name = ref('');
 const email = ref('');
 const password = ref('');
+const errorMessage = ref('');
 
 const handleRegister = () => {
-  const response = API.registerUser(email.value, password.value);
-
-  if (response.success) {
-    localStorage.setItem('userName', name.value);
-    router.push('/'); // Redireciona para a página de login
+  if (name.value && email.value && password.value) {
+    const user = {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+    };
+    localStorage.setItem("userName", JSON.stringify(user));
+    localStorage.setItem("isAuthenticated", "true");
+    router.push('/login'); 
   } else {
-    mensagemErro.value = response.error;
-    setTimeout(() => {
-      mensagemErro.value = '';
-    }, 2000);
+    errorMessage.value = 'Por favor, preencha todos os campos.';
   }
 };
 </script>

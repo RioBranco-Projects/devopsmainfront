@@ -26,21 +26,21 @@ const route = useRoute();
 const dropdownVisible = ref(true);
 const isLogin = ref(false);
 const isRegister = ref(false);
-const userName = ref(localStorage.getItem('currentUser') || 'Visitante');
+const userData = JSON.parse(localStorage.getItem('userName') || '{}');
+const userName = ref(userData.name || 'Visitante');
+
 
 function captalizeFistLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
 watch(route, (newRoute) => {
-  isLogin.value = newRoute.path === '/';
+  isLogin.value = newRoute.path === '/login';
   isRegister.value = newRoute.path === '/register';
 });
 function logout() {
-  // Remove as informações de autenticação e redireciona
-  localStorage.removeItem('currentUser');
-  localStorage.removeItem('isAuthenticated'); // ou qualquer chave de autenticação que você usa
-  window.location.replace('/');
+
+  window.location.replace('/login');
 }
 
 function toggleDropdown() {

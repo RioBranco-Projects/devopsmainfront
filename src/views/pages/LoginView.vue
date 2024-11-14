@@ -32,7 +32,8 @@
       <p class="register-link">
         Não tem uma conta? <router-link to="/register">Registre-se aqui</router-link>
       </p>
-      <p class="error-message">{{ mensagemErro }}</p>
+      <p class="error-message">{{ errorMessage }}</p>
+      <p class="success-message">{{ sucessMessage }}</p>
     </div>
   </div>
     </Transition>
@@ -41,25 +42,26 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import API from '../../api/api';
 
 const router = useRouter();
-const mensagemErro = ref('');
 const email = ref('');
 const password = ref('');
+const errorMessage = ref('');
+const sucessMessage = ref('');
 
-const handleLogin = async () => {
-  const response = API.loginUser(email.value, password.value);
-
-  if (response.success) {
-    const userName = localStorage.getItem('userName');
-    localStorage.setItem('currentUser', userName); // Armazena o usuário atual
-    router.push("/produtos"); // Redireciona para a rota inicial
-  } else {
-    mensagemErro.value = response.error;
+const handleLogin = () => {
+  const storedUser = JSON.parse(localStorage.getItem("userName"));
+  if (storedUser && storedUser.email === email.value && storedUser.password === password.value) {
+    localStorage.setItem("isAuthenticated", "true");
+    sucessMessage.value = 'Login realizado com sucesso!';
     setTimeout(() => {
-      mensagemErro.value = "";
-    }, 2000);
+      router.push('/produtos');
+    }, 1300)
+  } else {
+    errorMessage.value = 'Email ou senha incorretos.';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 1000)
   }
 };
 </script>
@@ -139,7 +141,12 @@ input[type="password"] {
 .error-message {
   color: red;
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 16px;
+}
+.success-message {
+  color: green;
+  margin-top: 10px;
+  font-size: 16px;
 }
 .fade-horizontal-enter-active, .fade-horizontal-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;

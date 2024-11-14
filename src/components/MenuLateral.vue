@@ -14,20 +14,6 @@
         </div>
       </RouterLink>
 
-
-      <RouterLink to="/graficos">
-        <div class="label">
-          <img src="../assets/svg/graphics.png" alt="">
-          <p>Gráficos</p>
-        </div>
-      </RouterLink>
-        <RouterLink to="/produtos">
-          <div class="label">
-              <img src="../assets/svg/home.png" alt="">
-              <p>Resumo</p>
-          </div>
-        </RouterLink>
-
     </div>
 </template>
 <script setup>

@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import API from "@/api/api";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
+      path: "/login",
       name: "login",
       component: () => import("../views/pages/LoginView.vue"),
     },
@@ -15,7 +14,7 @@ const router = createRouter({
       component: () => import("../views/pages/RegisterView.vue"),
     },
     {
-      path: "/home",
+      path: "/produtos",
       component: () => import("../views/HomeView.vue"),
       meta: { requiresAuth: true },
       children: [
@@ -23,16 +22,6 @@ const router = createRouter({
           path: "/produtos",
           name: "produtos",
           component: () => import("../views/ProdutoView.vue"),
-        },
-        {
-          path: "/dashboard",
-          name: "dashboard",
-          component: () => import("../views/DashboardView.vue"),
-        },
-        {
-          path: "/graficos",
-          name: "graphics",
-          component: () => import("../views/GraphicsView.vue"),
         },
         {
           path: "/comparar",
@@ -44,11 +33,15 @@ const router = createRouter({
   ],
 });
 
+// Verifica a autenticação antes de acessar rotas protegidas
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !API.isAuthenticated()) {
-    next("/");
+  // Verifica se a rota requer autenticação e se o usuário não está autenticado
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true"; // Checa se o usuário está autenticado
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next("/"); // Redireciona para a página de login se não estiver autenticado
   } else {
-    next();
+    next(); // Caso contrário, permite o acesso à rota
   }
 });
+
 export default router;
