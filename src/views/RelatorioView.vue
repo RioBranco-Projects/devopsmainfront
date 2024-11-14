@@ -22,24 +22,25 @@ onMounted(() => {
   const produtosSalvos = JSON.parse(localStorage.getItem('produtos') || '[]');
 
   produtos.value = produtosSalvos.map((produto) => {
-    // Faz o parse do JSON da média por aba e calcula a média final
     const medias = JSON.parse(localStorage.getItem('mediaPorAba') || '[]').map((media) =>
       media ? parseFloat(media) : null
     );
+
+    // Recupera as avaliações com justificativas para o produto específico
+    const avaliacoes = JSON.parse(localStorage.getItem(`avaliacoes_${produto.nome}`) || '[]');
+    const justificativas = avaliacoes.map(avaliacao => avaliacao.justificativa || 'Sem justificativa');
+
     const mediaFinal = calcularMediaFinal(medias);
 
-    // Retorna o produto com as médias e a média final
-    return { ...produto, medias, mediaFinal };
+    return { ...produto, medias, justificativas, mediaFinal };
   });
 });
 
 function exportarParaExcel() {
-  // Adiciona o nome e o e-mail do usuário como uma linha separada no início
   const usuarioInfo = [
     { Usuário: usuarioNome.value, Email: usuarioEmail.value }
   ];
 
-  // Prepara os dados para exportação dos produtos
   const data = produtos.value.map(produto => {
     const row = {
       Nome: produto.nome,
@@ -47,24 +48,21 @@ function exportarParaExcel() {
       'Média Final': produto.mediaFinal,
     };
     produto.medias.forEach((media, index) => {
-      row[`Categoria ${index + 1}`] = media !== null ? media : 'Sem avaliação';
+      row[`Categoria ${index + 1} - Nota`] = media !== null ? media : 'Sem avaliação';
+      row[`Categoria ${index + 1} - Justificativa`] = produto.justificativas[index] || 'Sem justificativa';
     });
     return row;
   });
 
-  // Combina as informações do usuário com os dados dos produtos
-  const dadosParaExportar = [...usuarioInfo, ...data];
+  const dadosParaExportar = [...usuarioInfo, {}, ...data];
 
-  // Cria a planilha e adiciona os dados
   const worksheet = XLSX.utils.json_to_sheet(dadosParaExportar);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório de Avaliação');
 
-  // Exporta o arquivo Excel
   XLSX.writeFile(workbook, 'Relatorio_Avaliacao_Produtos.xlsx');
 }
 </script>
-
 
 
 
@@ -78,10 +76,12 @@ function exportarParaExcel() {
       <div v-for="(produto, index) in produtos" :key="index" class="produto-relatorio">
         <h2>{{ produto.nome }}</h2>
         <p><strong>Descrição:</strong> {{ produto.descricao }}</p>
-        <h3>Médias das Categorias:</h3>
+        <h3>Médias e Justificativas das Categorias:</h3>
         <ul>
           <li v-for="(media, idx) in produto.medias" :key="idx">
-            Categoria {{ idx + 1 }}: {{ media !== null ? media : 'Sem avaliação' }}
+            <strong>Categoria {{ idx + 1 }}:</strong> 
+            Nota: {{ media !== null ? media : 'Sem avaliação' }} |
+            Justificativa: {{ produto.justificativas[idx] || 'Sem justificativa' }}
           </li>
         </ul>
         <p><strong>Média Final:</strong> {{ produto.mediaFinal }}</p>
@@ -90,7 +90,6 @@ function exportarParaExcel() {
     <p v-else>Nenhum produto cadastrado.</p>
   </div>
 </template>
-
 
 <style scoped>
 .relatorio-container {
@@ -112,13 +111,6 @@ li {
   background-color: #f9f9f9;
 }
 
-.avaliacao-item {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-}
 .export-button {
   margin-bottom: 20px;
   padding: 10px 20px;
