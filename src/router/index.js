@@ -14,12 +14,12 @@ const router = createRouter({
       component: () => import("../views/pages/RegisterView.vue"),
     },
     {
-      path: "/produtos",
+      path: "/",
       component: () => import("../views/HomeView.vue"),
       meta: { requiresAuth: true },
       children: [
         {
-          path: "/produtos",
+          path: "/",
           name: "produtos",
           component: () => import("../views/ProdutoView.vue"),
         },
