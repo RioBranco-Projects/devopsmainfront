@@ -24,9 +24,14 @@ const router = createRouter({
           component: () => import("../views/ProdutoView.vue"),
         },
         {
-          path: "/comparar",
-          name: "comparar",
+          path: "/regras",
+          name: "regras",
           component: () => import("../views/RegrasView.vue"),
+        },
+        {
+          path: "/comparacao",
+          name: "comparacao",
+          component: () => import("../views/ComparacaoView.vue"),
         },
         {
           path: "/relatorio",

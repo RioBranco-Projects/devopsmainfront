@@ -32,8 +32,7 @@
       <p class="register-link">
         Não tem uma conta? <router-link to="/register">Registre-se aqui</router-link>
       </p>
-      <p class="error-message">{{ errorMessage }}</p>
-      <p class="success-message">{{ sucessMessage }}</p>
+      <p :class="['message', messageType]" v-if="message">{{ message }}</p>
     </div>
   </div>
     </Transition>
@@ -46,22 +45,47 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
-const sucessMessage = ref('');
+const message = ref('');
+const messageType = ref(''); // Define o tipo da mensagem (success ou error)
 
-const handleLogin = () => {
-  const storedUser = JSON.parse(localStorage.getItem("userName"));
-  if (storedUser && storedUser.email === email.value && storedUser.password === password.value) {
-    localStorage.setItem("isAuthenticated", "true");
-    sucessMessage.value = 'Login realizado com sucesso!';
+const handleLogin = async () => {
+  try {
+    const response = await fetch('https://qualiotbackend.onrender.com/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      message.value = errorData.message || 'Erro ao fazer login. Verifique suas credenciais.';
+      messageType.value = 'error'; // Define o tipo como erro
+      return;
+    }
+
+    const data = await response.json();
+
+    // Armazena o token no localStorage se existir
+    if (data.token) {
+      localStorage.setItem('authToken', data.token);
+    }
+
+    // Define a mensagem de sucesso
+    message.value = 'Login realizado com sucesso!';
+    messageType.value = 'success'; // Define o tipo como sucesso
+
+    // Redireciona após 2 segundos
     setTimeout(() => {
       router.push('/home');
-    }, 1300)
-  } else {
-    errorMessage.value = 'Email ou senha incorretos.';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 1000)
+    }, 2000);
+  } catch (error) {
+    message.value = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
+    messageType.value = 'error'; // Define o tipo como erro
   }
 };
 </script>
@@ -145,15 +169,18 @@ input[type="password"] {
 .login-button:hover {
   background-color: #0056b3;
 }
-.error-message {
-  color: red;
+.message {
   margin-top: 10px;
   font-size: 16px;
+  text-align: center;
 }
-.success-message {
-  color: green;
-  margin-top: 10px;
-  font-size: 16px;
+
+.message.success {
+  color: green; /* Estilo para mensagens de sucesso */
+}
+
+.message.error {
+  color: red; /* Estilo para mensagens de erro */
 }
 .fade-horizontal-enter-active, .fade-horizontal-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;

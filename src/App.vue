@@ -18,9 +18,6 @@ import Header from './components/Header.vue';
   box-sizing: border-box;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-body {
-  background-color: #eaeaea;
-}
 .router-enter-from {
   opacity: 0;
   transform: translateX(10px);

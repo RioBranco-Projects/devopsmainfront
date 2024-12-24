@@ -1,465 +1,337 @@
 <template>
-  <section class="produtos">
+  <section class="regras-view">
+    <!-- Navegação de Abas -->
     <div class="abas">
-      <button 
-        class="button" 
-        v-for="(tab, index) in tabs" 
-        :key="index" 
-        v-bind:class="{ activeTab: activeIndex === index + 1, inactiveTab: tab.inactive }" 
-        @click="setActiveTab(index + 1)">
+      <button
+        v-for="(tab, index) in tabs"
+        :key="index"
+        @click="setActiveTab(index)"
+        :class="{ active: activeIndex === index, inactive: tab.inactive }"
+        :disabled="tab.inactive"
+      >
         {{ tab.title }}
       </button>
-
     </div>
 
-    <div class="box">
-      <div class="formulario">
-        <Transition name="slide">
-          <div v-show="activeIndex === 1" class="form-content">
-            <FormVue 
-              q1="Identificação única"
-              q2="Capacidade de atualização"
-              q3="Consumo de energia"
-              p1="Qual é o identificador único do objeto IoT (por exemplo, número de série ou ID de dispositivo) e como ele é gerado e gerenciado?"
-              p2="O objeto IoT pode receber atualizações de firmware/software? Como o processo de atualização é gerenciado e seguro?"
-              p3="Quais são as expectativas de consumo de energia e vida útil da bateria do objeto IoT? Existem modos de economia de energia?"
-              :mediaPonderada="mediaPorAba[0]"
-              @atualizar-media="(media) => setMediaPonderada(0, media)"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
-          <div v-show="activeIndex === 2" class="form-content">
-            <FormVue 
-              q1="Tipos de sensores"
-              q2="Precisão e calibração"
-              q3="Resiliência Ambiental"
-              p1="Quais tipos de sensores são utilizados e para quais finalidades específicas?"
-              p2="Qual é a precisão necessária dos sensores e como a calibração é realizada e mantida?"
-              p3="Como os sensores lidam com variações ambientais como temperatura, umidade e interferências?"
-              :mediaPonderada="mediaPorAba[1]"
-              @atualizar-media="(media) => setMediaPonderada(1, media)"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
-          <div v-show="activeIndex === 3" class="form-content">
-            <FormVue 
-              q1="Protocolos de comunicação"
-              q2="Gerenciamento de banda"
-              q3="Estratégias de retransmissão"
-              p1="Quais protocolos de comunicação são suportados (por exemplo, MQTT, CoAP, HTTP, etc.) e por quê?"
-              p2="Como será gerenciado o uso da banda de rede, especialmente em ambientes com recursos limitados? Existem mecanismos de adaptação à variação da banda?"
-              p3="Existem mecanismos para garantir a entrega de dados em caso de falhas de transmissão?"
-              :mediaPonderada="mediaPorAba[2]"
-              @atualizar-media="(media) => setMediaPonderada(2, media)"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
-          <div v-show="activeIndex === 4" class="form-content">
-            <FormVue 
-              q1="Escalabilidade"
-              q2="Recuperação de desastres"
-              q3="Qualidade dos dados"
-              p1="Como a solução em nuvem lida com o aumento do número de dispositivos e do volume de dados?"
-              p2="Quais são os planos de recuperação de desastres e continuidade de negócios?"
-              p3="Como será garantida a qualidade dos dados armazenados? Quais os mecanismos de validação e limpeza dos dados?"
-              :mediaPonderada="mediaPorAba[3]"
-              @atualizar-media="(media) => setMediaPonderada(3, media)"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
-          <div v-show="activeIndex === 5" class="form-content">
-            <FormVue 
-              q1="Privacidade e proteção de dados"
-              q2="Segurança da informação"
-              q3="Gerenciamento de acesso e auditoria"
-              p1="Quais medidas são adotadas para garantir a coleta, o armazenamento e o uso seguros e transparentes dos dados pessoais dos usuários, incluindo o consentimento informado e o cumprimento dos direitos dos titulares dos dados?"
-              p2="Como o sistema protege as informações dos usuários contra acessos não autorizados, ataques cibernéticos e perda de dados, garantindo a confidencialidade, integridade e disponibilidade das informações?"
-              p3="Como o sistema controla o acesso às informações, atribui permissões aos usuários e garante a rastreabilidade das ações realizadas no sistema, visando a segurança e a conformidade?"
-              :mediaPonderada="mediaPorAba[4]"
-              @atualizar-media="(media) => setMediaPonderada(4, media)"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
-          <div v-show="activeIndex === 6" class="form-content">
-            <FormVue 
-              q1="Processamento de dados"
-              q2="Insights acionáveis"
-              q3="Visualização de dados"
-              p1="Como os dados são processados e analisados? Existem capacidades de processamento de borda (edge computing)?"
-              p2="Como os insights são extraídos dos dados e como eles podem ser utilizados para a tomada de decisões?"
-              p3="Quais ferramentas de visualização são utilizadas para representar os dados de forma compreensível para os usuários finais?"
-              :mediaPonderada="mediaPorAba[5]"
-              @atualizar-media="(media) => setMediaPonderada(5, media)"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide" appear>
-          <div v-show="activeIndex === 7" class="form-content">
-            <FormVue 
-              q1="Experiência do usuário"
-              q2="Acessibilidade"
-              q3="Usabilidade"
-              p1="O sistema oferece uma experiência intuitiva, consistente e personalizada, guiando o usuário de forma clara e eficiente desde o início da interação?"
-              p2="O sistema é acessível a todos os usuários, independentemente de suas habilidades ou deficiências, garantindo igualdade de acesso e uso?"
-              p3="O sistema é fácil de aprender, usar e eficiente para realizar as tarefas desejadas, minimizando erros e maximizando a satisfação do usuário?"
-              :mediaPonderada="mediaPorAba[6]"
-              @atualizar-media="(media) => setMediaPonderada(6, media)"
-            />
-          </div>
-        </Transition>
-      </div>
-      <div v-if="produtos.length" class="produto-box">
-        <h2>Produtos Cadastrados pelo {{ userName }}</h2>
-        
-        <!-- Option list for selecting a product -->
-        <select v-model="selectedProdutoIndex">
-          <option v-for="(produto, index) in produtos" :key="index" :value="index">
-            {{ produto.nome }}
-          </option>
-        </select>
+    <!-- Conteúdo das Abas -->
+    <div class="conteudo">
+      <div class="grid-container">
+        <!-- Seleção de Produto -->
+        <div class="produto-selecao">
+          <h3>Selecionar Produto</h3>
+          <select v-model="selectedProdutoIndex" class="select-produto">
+            <option v-for="(produto, index) in produtos" :key="index" :value="index">
+              {{ produto.nome }}
+            </option>
+          </select>
 
-        <!-- Display selected product details -->
-        <div v-if="selectedProdutoIndex !== null" class="produto-detalhes">
-          <h3>{{ produtos[selectedProdutoIndex].nome }}</h3>
-          <p>{{ produtos[selectedProdutoIndex].descricao }}</p>
-          <p>A média final do produto foi: {{ mediaFinal }}</p>
-          <p :class="proficiencyClass">Proficiência do produto: {{ nivelProeficiencia }}</p>
+          <div v-if="selectedProduto" class="produto-detalhes">
+            <h4>Detalhes do Produto</h4>
+            <p><strong>Nome:</strong> {{ selectedProduto.nome }}</p>
+            <p><strong>Descrição:</strong> {{ selectedProduto.descricao }}</p>
+          </div>
         </div>
-      </div> <!-- produto-box -->
+
+        <!-- Formulário de Avaliação -->
+        <div class="formulario">
+          <transition name="fade" mode="out-in">
+            <div :key="activeIndex" class="tab-content">
+              <div v-if="activeIndex === 0">
+                <h2>Configurações do Objeto IoT</h2>
+                <FormVue
+                  q1="Identificação única"
+                  p1="Qual é o identificador único do objeto IoT e como ele é gerado?"
+                  q2="Capacidade de atualização"
+                  p2="O objeto IoT pode receber atualizações? Como o processo é seguro?"
+                  q3="Consumo de energia"
+                  p3="Quais são as expectativas de consumo de energia?"
+                  @atualizar-media="atualizarMedia(0, $event)"
+                />
+              </div>
+
+              <div v-else-if="activeIndex === 1">
+                <h2>Configurações de Sensores</h2>
+                <FormVue
+                  q1="Tipos de sensores"
+                  p1="Quais tipos de sensores são utilizados e para quais finalidades?"
+                  q2="Precisão e calibração"
+                  p2="Qual é a precisão necessária e como a calibração é mantida?"
+                  q3="Resiliência ambiental"
+                  p3="Como os sensores lidam com variações ambientais?"
+                  @atualizar-media="atualizarMedia(1, $event)"
+                />
+              </div>
+
+              <div v-else-if="activeIndex === 2">
+                <h2>Configurações de Transmissão</h2>
+                <FormVue
+                  q1="Protocolos de comunicação"
+                  p1="Quais protocolos de comunicação são suportados (MQTT, HTTP, etc.)?"
+                  q2="Gerenciamento de banda"
+                  p2="Como será gerenciado o uso da banda de rede?"
+                  q3="Estratégias de retransmissão"
+                  p3="Existem mecanismos para garantir a entrega de dados?"
+                  @atualizar-media="atualizarMedia(2, $event)"
+                />
+              </div>
+
+              <div v-else-if="activeIndex === 3">
+                <h2>Armazenamento em Nuvem</h2>
+                <FormVue
+                  q1="Escalabilidade"
+                  p1="Como a solução lida com o aumento de dispositivos e dados?"
+                  q2="Recuperação de desastres"
+                  p2="Quais planos existem para recuperação de dados e continuidade?"
+                  q3="Qualidade dos dados"
+                  p3="Como a qualidade dos dados é garantida durante o armazenamento?"
+                  @atualizar-media="atualizarMedia(3, $event)"
+                />
+              </div>
+
+              <div v-else-if="activeIndex === 4">
+                <h2>Segurança e Privacidade</h2>
+                <FormVue
+                  q1="Privacidade e proteção dos dados"
+                  p1="Quais medidas são adotadas para proteger os dados pessoais dos usuários?"
+                  q2="Segurança da informação"
+                  p2="Como o sistema protege contra ataques cibernéticos e vazamento de dados?"
+                  q3="Gerenciamento de acesso"
+                  p3="Como o acesso aos dados é controlado e auditado?"
+                  @atualizar-media="atualizarMedia(4, $event)"
+                />
+              </div>
+
+              <div v-else-if="activeIndex === 5">
+                <h2>Análise de Dados</h2>
+                <FormVue
+                  q1="Processamento de dados"
+                  p1="Como os dados são processados e analisados para extrair informações?"
+                  q2="Insights acionáveis"
+                  p2="Como os insights são gerados e apresentados para tomada de decisões?"
+                  q3="Visualização dos dados"
+                  p3="Quais ferramentas são utilizadas para representar os dados de forma clara?"
+                  @atualizar-media="atualizarMedia(5, $event)"
+                />
+              </div>
+
+              <div v-else-if="activeIndex === 6">
+                <h2>Experiência do Usuário</h2>
+                <FormVue
+                  q1="Usabilidade"
+                  p1="O sistema é intuitivo e fácil de usar?"
+                  q2="Acessibilidade"
+                  p2="O sistema é acessível para pessoas com deficiência?"
+                  q3="Satisfação do usuário"
+                  p3="O sistema atende às expectativas e necessidades do usuário final?"
+                  @atualizar-media="atualizarMedia(6, $event)"
+                />
+              </div>
+            </div>
+          </transition>
+        </div>
+      </div>
     </div>
-    <div class="buttons">
-      <div class="inativar-tab">
-        <button @click="inativarAbaAtual">Inativar aba atual</button>
-      </div>
-      <div class="reativar-tab">
-        <button @click="reativarAbaAnterior">Reativar aba anterior</button>
-      </div>
+
+    <!-- Botões de Controle -->
+    <div class="controle">
+      <button @click="inativarAba" class="btn-inativar" :disabled="tabs[activeIndex].inactive">
+        Inativar Aba Atual
+      </button>
+      <button @click="reativarAba" class="btn-reativar">
+        Reativar Aba
+      </button>
+    </div>
+
+    <!-- Resultado Final -->
+    <div class="resultado">
+      <h3>Média Geral: {{ mediaGeral }}</h3>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import FormVue from '@/components/FormVue.vue';
+import { ref, computed, onMounted } from "vue";
+import FormVue from "@/components/FormVue.vue";
 
-const userData = JSON.parse(localStorage.getItem('userName') || '{}');
-const userName = ref(userData.name || 'Visitante');
+const tabs = ref([
+  { title: "Objeto IoT", inactive: false },
+  { title: "Sensores", inactive: false },
+  { title: "Transmissão", inactive: false },
+  { title: "Armazenamento", inactive: false },
+  { title: "Segurança", inactive: false },
+  { title: "Análise", inactive: false },
+  { title: "Experiência", inactive: false },
+]);
 
-const activeIndex = ref(1);
-const selectedProdutoIndex = ref(null);
+const activeIndex = ref(0);
+const mediasPorAba = ref([0, 0, 0, 0, 0, 0, 0]);
 
 const produtos = ref([]);
-const mediaPorAba = ref(Array(7).fill(''));
-
-// Computed para calcular a média final a partir das médias das abas
-const mediaFinal = computed(() => {
-  const notasValidas = mediaPorAba.value.filter((nota) => nota !== '');
-  const soma = notasValidas.reduce((acc, nota) => acc + parseFloat(nota), 0);
-  return notasValidas.length > 0 ? (soma / notasValidas.length).toFixed(2) : '0.00';
-});
-
-// Computed para calcular o nível de proficiência
-const nivelProeficiencia = computed(() => {
-  const media = parseFloat(mediaFinal.value);
-  if (media < 5) {
-    return 'Básico';
-  } else if (media <= 7) {
-    return 'Médio';
-  } else {
-    return 'Alto';
-  }
-});
-
-const proficiencyClass = computed(() => {
-  if (nivelProeficiencia.value === 'Básico') {
-    return 'proficiency-basic';
-  } else if (nivelProeficiencia.value === 'Médio') {
-    return 'proficiency-medium';
-  } else {
-    return 'proficiency-high';
-  }
-});
-
-
-// Função para configurar a média ponderada e salvar no localStorage
-function setMediaPonderada(index, media) {
-  mediaPorAba.value[index] = media;
-  localStorage.setItem('mediaPorAba', JSON.stringify(mediaPorAba.value));
-
-  // Atualizar média final e nível de proficiência no localStorage
-  localStorage.setItem('mediaFinal', JSON.stringify(mediaFinal.value));
-  localStorage.setItem('nivelProeficiencia', JSON.stringify(nivelProeficiencia.value));
-}
-const initialTabs = [
-  {
-    title: 'Objeto',
-    inactive: false
-  },
-  {
-    title: 'Sensores',
-    inactive: false
-  },
-  {
-    title: 'Transmissão',
-    nactive: false
-  },
-  {
-    title: 'Cloud',
-    inactive: false
-  },
-  {
-    title: 'Segurança',
-    inactive: false
-  },
-  {
-    title: 'Análise',
-    inactive: false
-  },
-  {
-    title: 'Uso',
-    inactive: false
-  },
-];
-const tabs = ref(initialTabs); 
-
-function reativarAbaAnterior (index) {
-  const currentTab = activeIndex.value - 1;
-
-  // Procura uma aba anterior que esteja inativa
-  let previousInactiveIndex = currentTab - 1;
-  while (previousInactiveIndex >= 0 && !tabs.value[previousInactiveIndex].inactive) {
-    previousInactiveIndex--;
-  }
-
-  if (previousInactiveIndex >= 0) {
-    // Reativa a aba anterior
-    tabs.value[previousInactiveIndex].inactive = false;
-    activeIndex.value = previousInactiveIndex + 1;
-
-    // Atualiza o localStorage, se necessário
-    localStorage.setItem('mediaPorAba', JSON.stringify(mediaPorAba.value));
-  }
-}
-function inativarAbaAtual() {
-  const currentTab = activeIndex.value - 1;
-
-  if (tabs.value[currentTab]) {
-    tabs.value[currentTab].inactive = true;
-    mediaPorAba.value[currentTab] = ''; // Limpa a média da aba inativada
-    localStorage.setItem('mediaPorAba', JSON.stringify(mediaPorAba.value)); // Atualiza localStorage
-
-    // Definir a próxima aba ativa
-    let nextActiveIndex = tabs.value.findIndex(
-      (tab, idx) => !tab.inactive && idx >= currentTab
-    );
-    if (nextActiveIndex === -1) {
-      nextActiveIndex = tabs.value.findIndex(tab => !tab.inactive);
-    }
-    if (nextActiveIndex !== -1) {
-      activeIndex.value = nextActiveIndex + 1;
-    }
-  }
-}
-function setActiveTab(index) {
-  if (!tabs.value[index - 1].inactive) {
-    activeIndex.value = index; 
-  }
-}
+const selectedProdutoIndex = ref(null);
 
 onMounted(() => {
-  const produtosSalvos = localStorage.getItem('produtos');
-  if (produtosSalvos) {
-    produtos.value = JSON.parse(produtosSalvos);
-    selectedProdutoIndex.value = produtos.value.length > 0 ? 0 : null;
+  const produtosSalvos = JSON.parse(localStorage.getItem("produtos")) || [];
+  produtos.value = produtosSalvos;
+  if (produtos.value.length > 0) {
+    selectedProdutoIndex.value = 0;
   }
+});
 
-  const mediasSalvas = localStorage.getItem('mediaPorAba');
-  if (mediasSalvas) {
-    mediaPorAba.value = JSON.parse(mediasSalvas);
+const selectedProduto = computed(() => produtos.value[selectedProdutoIndex.value]);
+
+function setActiveTab(index) {
+  if (!tabs.value[index].inactive) activeIndex.value = index;
+}
+
+function inativarAba() {
+  tabs.value[activeIndex.value].inactive = true;
+  setNextActiveTab();
+}
+
+function reativarAba() {
+  const inativaIndex = tabs.value.findIndex((tab) => tab.inactive);
+  if (inativaIndex !== -1) {
+    tabs.value[inativaIndex].inactive = false;
+    activeIndex.value = inativaIndex;
   }
+}
+
+function setNextActiveTab() {
+  const nextActive = tabs.value.findIndex((tab, idx) => !tab.inactive && idx > activeIndex.value);
+  activeIndex.value = nextActive !== -1 ? nextActive : 0;
+}
+
+function atualizarMedia(index, media) {
+  mediasPorAba.value[index] = parseFloat(media);
+}
+
+const mediaGeral = computed(() => {
+  const mediasValidas = mediasPorAba.value.filter((m) => m > 0);
+  return mediasValidas.length > 0
+    ? (mediasValidas.reduce((acc, val) => acc + val, 0) / mediasValidas.length).toFixed(2)
+    : "0.00";
 });
 </script>
 
 <style scoped>
-.slide-enter-active, .slide-leave-active {
-  transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-.slide-enter-from {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.slide-enter-to {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-from {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-to {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-
-.formulario {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-.form-content {
-  position: absolute;
-  width: auto;
-  padding: 10px;
-  height: 100%;
+.regras-view {
+  padding: 20px;
+  background-color: #f4f7fa;
+  border-radius: 15px;
 }
 
 .abas {
-  padding: 5px;
-  gap: 5px;
-  height: auto;
   display: flex;
-  justify-content: flex-start;
-  width: auto;
-}
-
-.button {
-  background-color: #ececec;
-  border: none;
-  width: 160px;
-  height: 50px;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: default;
-  font-size: 18px;
-}
-.buttons {
-  display: flex;
-  gap: 10px;
   justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
 }
-.inativar-tab {
-  display: flex;
-}
-.reativar-tab button {
+
+.abas button {
+  padding: 10px 15px;
+  background-color: #ddd;
   border: none;
-  background-color: #85fc85;
-  padding: 10px;
-  color: white;
-  font-size: 18px;
-  height: 50px;
-  border-radius: 10px;
+  border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  transition: calc(.3s);
 }
-.reativar-tab button:hover {
-  background-color: #54c110;
-}
-.inativar-tab button {
-  border: none;
-  background-color: #ff9f9f;
-  padding: 10px;
+
+.abas button.active {
+  background-color: #007bff;
   color: white;
-  font-size: 18px;
-  height: 50px;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: calc(.3s);
-}
-.inativar-tab button:hover {
-  background-color: #ff5050;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.box {
-  display: flex;
-  height: auto;
-}
-
-.activeTab {
-  background-color: #93ff97;
-}
-
-.inactiveTab {
-  background-color: #ccc;
-  color: #777;
+.abas button.inactive {
+  background-color: #bbb;
+  color: #666;
   cursor: not-allowed;
 }
 
-.produto-box {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 20px;
-  width: 1200px;
-  margin: 0 auto;
-  height: auto;
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
 }
 
-.produto-box h2 {
-  color: #333;
-  font-size: 24px;
+.produto-selecao {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.select-produto {
+  width: 100%;
+  padding: 10px;
   margin-bottom: 15px;
 }
-select {
-  width: 100%;
-  max-width: 300px;
-  padding: 10px;
-  font-size: 16px;
-  color: #333;
-  background-color: #ececec;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
 
-select:hover {
-  border-color: #0088ff;
-}
-
-.produto-detalhes {
-  background-color: #ccc;
+.produto-detalhes h4 {
   margin-bottom: 10px;
+}
+
+.formulario {
+  background: white;
   border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  font-size: 30px;
+  padding: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.produto-detalhes h3 {
-  margin: 0;
-  color: #333;
+.controle {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-.produto-detalhes p {
-  margin: 5px 0 0;
-}
-.proficiency-basic {
-  color: red;
+.btn-inativar {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
   font-weight: bold;
 }
 
-.proficiency-medium {
-  color: orange;
+.btn-reativar {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
   font-weight: bold;
 }
 
-.proficiency-high {
-  color: green;
+.resultado {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 20px;
   font-weight: bold;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .produto-selecao {
+    order: 1;
+  }
+
+  .formulario {
+    order: 2;
+  }
 }
 </style>

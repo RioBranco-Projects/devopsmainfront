@@ -108,17 +108,19 @@ const removerProduto = (index) => {
 
 <style scoped>
 .produto-cadastro {
-  height: 500px;
+  height: auto;
   border-radius: 10px;
-  height: 640px;
   max-width: 800px;
-  margin: 120px auto;
+  margin: 120px auto; /* Centralizado no desktop */
+  padding: 20px;
+  background: #fff;
 }
 
 .abas {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  gap: 10px; /* Espaçamento entre botões */
 }
 
 .abas button {
@@ -126,25 +128,25 @@ const removerProduto = (index) => {
   border: none;
   cursor: pointer;
   background-color: #ddd;
-  margin: 0 10px;
   font-weight: bold;
   font-size: 18px;
   border-radius: 8px;
   transition: background-color 0.3s;
 }
 
-.abas button.active, .abas button:hover {
-  background-color: #348ACF;
+.abas button.active,
+.abas button:hover {
+  background-color: #348acf;
   color: white;
 }
 
-/* Contêiner fixo para manter o tamanho */
 .transicao-container {
   position: relative;
-  height: 100%;
+  height: 100%; /* Mantém altura dinâmica */
 }
 
-.form-container, .list-container {
+.form-container,
+.list-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -152,23 +154,23 @@ const removerProduto = (index) => {
   padding: 30px;
   background: white;
   border-radius: 10px;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.485);
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Formulário */
 .form-group {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   font-weight: bold;
   font-size: 18px;
-  margin-top: 10px;
 }
 
-.form-group input, .form-group textarea {
+.form-group input,
+.form-group textarea {
   width: 100%;
   padding: 12px;
-  margin-top: 20px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -176,7 +178,7 @@ const removerProduto = (index) => {
 
 .btn-cadastrar {
   padding: 12px;
-  background-color: #348ACF;
+  background-color: #348acf;
   color: white;
   border: none;
   cursor: pointer;
@@ -192,10 +194,11 @@ const removerProduto = (index) => {
   background-color: #276ba1;
 }
 
+/* Lista de produtos */
 .produtos-list {
   display: flex;
-  padding: 20px 0;
   flex-direction: column;
+  gap: 20px;
 }
 
 .produto-card {
@@ -232,28 +235,101 @@ const removerProduto = (index) => {
   background-color: #d42f2f;
 }
 
-/* Estilos para a transição fade-horizontal */
-.fade-horizontal-enter-active, .fade-horizontal-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+/* Responsividade */
+@media (max-width: 768px) {
+  .produto-cadastro {
+    max-width: 100%; /* Ocupa toda a largura disponível */
+    margin: 60px auto; /* Reduzido para centralizar */
+    padding: 15px;
+  }
+
+  .abas {
+    flex-direction: column; /* Coloca os botões em coluna */
+    align-items: center;
+    gap: 10px;
+  }
+
+  .abas button {
+    width: 100%; /* Botões ocupam toda a largura */
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .form-container,
+  .list-container {
+    padding: 20px;
+  }
+
+  .form-group label {
+    font-size: 16px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .btn-cadastrar {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .produtos-list {
+    gap: 15px;
+  }
+
+  .produto-card {
+    padding: 15px;
+  }
+
+  .produto-detalhes h2 {
+    font-size: 18px;
+  }
+
+  .produto-detalhes p {
+    font-size: 14px;
+  }
+
+  .btn-remover {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
 }
 
-.fade-horizontal-enter-from {
-  opacity: 0;
-  transform: translateX(-20px);
+@media (max-width: 480px) {
+  .produto-cadastro {
+    margin: 30px auto; /* Reduzido ainda mais para telas pequenas */
+    padding: 10px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .btn-cadastrar {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .produto-detalhes h2 {
+    font-size: 16px;
+  }
+
+  .produto-detalhes p {
+    font-size: 12px;
+  }
+
+  .btn-remover {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
 }
 
-.fade-horizontal-enter-to {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.fade-horizontal-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.fade-horizontal-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
 </style>

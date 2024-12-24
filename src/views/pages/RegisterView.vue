@@ -39,6 +39,7 @@
       <p class="login-link">
         Já tem uma conta? <router-link to="/">Faça login aqui</router-link>
       </p>
+      <p :class="['message', messageType]" v-if="message">{{ message }}</p>
     </div>
     <img src="/src/assets/logo/qualiot.png" alt="">
   </div>
@@ -48,25 +49,54 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 const router = useRouter();
 const name = ref('');
 const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
-const handleRegister = () => {
-  if (name.value && email.value && password.value) {
-    const user = {
-      name: name.value,
-      email: email.value,
-      password: password.value,
-    };
-    localStorage.setItem("userName", JSON.stringify(user));
-    localStorage.setItem("isAuthenticated", "true");
-    router.push('/'); 
-  } else {
-    errorMessage.value = 'Por favor, preencha todos os campos.';
+const message = ref('');
+const messageType = ref(''); // Define o tipo da mensagem (success ou error)
+
+const handleRegister = async () => {
+  try {
+    if (!name.value || !email.value || !password.value) {
+      message.value = 'Por favor, preencha todos os campos.';
+      messageType.value = 'error';
+      return;
+    }
+    const response = await fetch('https://qualiotbackend.onrender.com/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      message.value = errorData.message || 'Erro ao registrar. Tente novamente.';
+      messageType.value = 'error';
+      return;
+    }
+
+    // Caso o registro seja bem-sucedido
+    message.value = 'Registro realizado com sucesso! Redirecionando para o login...';
+    messageType.value = 'success';
+
+    // Redireciona após 3 segundos
+    setTimeout(() => {
+      router.push('/');
+    }, 3000);
+  } catch (error) {
+    message.value = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
+    messageType.value = 'error';
   }
 };
+
 </script>
 <style scoped>
 .register-page {
@@ -165,5 +195,18 @@ input[type="password"] {
 .fade-horizontal-leave-to {
   opacity: 0;
   transform: translateX(20px);
+}
+.message {
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.message.success {
+  color: green; /* Mensagem de sucesso */
+}
+
+.message.error {
+  color: red; /* Mensagem de erro */
 }
 </style>

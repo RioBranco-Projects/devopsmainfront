@@ -1,379 +1,265 @@
 <template>
-  <form class="form">
-    <div class="box">
-      <div class="title">
-        <div class="foto">
-          <img src="/src/assets/svg/user.png" alt="">
-        </div>
-        <div class="sla">
-          <h1>Projetista:</h1> 
-          <p>{{ userName }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="box2">
-      <p class="avaliacao">{{ AvaliacaoSalva }}</p>
-      
-      <!-- Critérios iniciais -->
-      <div class="form-group" v-for="(nota, index) in notas" :key="index">
-        <label :for="'text' + (index + 1)">
-          {{ index === 0 ? q1 : index === 1 ? q2 : q3 }}:
-          <p>{{ index === 0 ? p1 : index === 1 ? p2 : p3 }}</p> (peso: {{ pesos[index] }})
+  <div class="form-container">
+    <h2>Avaliação Personalizada</h2>
+
+    <!-- Perguntas Fixas -->
+    <div class="fixed-criterios">
+      <div class="criterio" v-for="(nota, index) in notasFixas" :key="'fixa-' + index">
+        <label :for="'criterio' + (index + 1)">
+          {{ perguntasFixas[index].texto }} (Peso: {{ pesosRebalanceados[index] }})
+          <p>{{ perguntasFixas[index].descricao }}</p>
         </label>
-        <input type="number" :placeholder="placeholders[index]" :id="'text' + (index + 1)" v-model.number="notas[index]" required>
-      </div>
-      
-      <!-- Campo de justificativa fora do form-group -->
-      <div v-for="(justificativa, index) in justificativas" :key="'justificativa-' + index" class="justification-box">
-        <textarea v-model="justificativas[index]" :placeholder="'Justificativa para ' + (index + 1)"></textarea>
-      </div>
-
-      <!-- Critérios adicionais com opção de exclusão -->
-      <div v-for="(criterio, index) in criteriosAdicionais" :key="index" class="form-group">
-        <label :for="'text' + (index + 4)">{{ criterio.pergunta }}: (peso: {{ pesos[index + 3] }}):</label>
-        <div class="input-remove-wrapper">
-          <input type="number" :placeholder="criterio.placeholder" :id="'text' + (index + 4)" v-model.number="criterio.nota" required>
-          <button type="button" @click="removerCriterio(index)" class="remove-button">Remover critério</button>
-        </div>
-      </div>
-
-      <!-- Campo de justificativa para critérios adicionais fora do form-group -->
-      <div v-for="(criterio, index) in criteriosAdicionais" :key="'justificacao-adicional-' + index" class="justification-box">
-        <textarea v-model="criterio.justification" :placeholder="'Justificativa para ' + criterio.pergunta"></textarea>
-      </div>
-
-      <!-- Input para adicionar nova pergunta -->
-      <div v-if="showNewQuestionInput && criteriosAdicionais.length < 2" class="form-group">
-        <label for="newQuestion">Novo critério:</label>
-        <input type="text" id="newQuestion" v-model="novaPergunta" @keyup.enter.prevent="salvarPergunta">
-        <button type="button" @click="salvarPergunta">Salvar critério</button>
-        <button type="button" @click="cancelarPergunta">Cancelar</button>
-      </div>
-
-      <!-- Botões de ação -->
-      <div class="botao">
-        <button v-if="!showNewQuestionInput && criteriosAdicionais.length < 2" @click.prevent="exibirInputPergunta">Adicionar mais um critério</button>
-        <button @click.prevent="salvarInput">Salvar avaliação</button>
+        <input
+          type="number"
+          :id="'criterio' + (index + 1)"
+          v-model="notasFixas[index]"
+          min="0"
+          max="10"
+          placeholder="Nota (0-10)"
+        />
+        <!-- Justificativa para a nota -->
+        <textarea
+          v-model="justificativasFixas[index]"
+          :placeholder="'Justifique sua nota para ' + perguntasFixas[index].texto"
+          class="textarea-justificativa"
+        ></textarea>
       </div>
     </div>
-    <MediaCalculator v-if="todosCamposPreenchidos" :notas="notasCompletas" />
-  </form>
+
+    <!-- Critérios Dinâmicos -->
+    <div v-for="(criterio, index) in criterios" :key="'dinamico-' + index" class="criterio">
+      <label>
+        Critério Adicional {{ index + 1 }} (Peso: {{ pesosRebalanceados[index + 3] }})
+      </label>
+      <input
+        type="text"
+        v-model="criterio.nome"
+        placeholder="Nome do critério"
+      />
+      <input
+        type="number"
+        v-model="criterio.nota"
+        min="0"
+        max="10"
+        placeholder="Nota (0-10)"
+      />
+      <!-- Justificativa para o critério adicional -->
+      <textarea
+        v-model="criterio.justificativa"
+        placeholder="Justifique sua nota para este critério adicional"
+        class="textarea-justificativa"
+      ></textarea>
+      <button @click="removerCriterio(index)" class="btn-remover">Remover</button>
+    </div>
+
+    <!-- Botão para Adicionar Critério -->
+    <button
+      @click="adicionarCriterio"
+      class="btn-adicionar"
+      :disabled="criterios.length >= maxCriterios"
+    >
+      Adicionar Critério
+    </button>
+
+    <!-- Botão para Salvar Dados -->
+    <button
+      @click="salvarDados"
+      class="btn-salvar"
+    >
+      Salvar Dados
+    </button>
+
+    <!-- Resultado -->
+    <div class="resultado">
+      <h3>Média Ponderada: {{ calcularMediaPonderada }}</h3>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits } from 'vue';
-import MediaCalculator from './minicomponents/MediaCalculator.vue';
+import { ref, computed, defineProps, defineEmits } from "vue";
 
-const userData = JSON.parse(localStorage.getItem('userName') || '{}');
-const userName = ref(userData.name || 'Visitante');
-const justificativas = ref(['', '', '']); // Justificativas para os critérios iniciais
-
+// Propriedades recebidas pelo componente (3 perguntas fixas)
 const props = defineProps({
-  mediaPonderada: Number,
   q1: String,
   q2: String,
   q3: String,
-  d1: String,
-  d2: String,
-  d3: String,
   p1: String,
   p2: String,
-  p3: String
+  p3: String,
 });
 
-const emit = defineEmits(['atualizar-media']);
+// Evento emitido para atualizar a média calculada no componente pai
+const emit = defineEmits(["atualizar-media"]);
 
-const AvaliacaoSalva = ref('');
-const placeholders = ref(["d1", "d2", "d3"]);
-const notas = ref([0, 0, 0]); // Inicia com três notas
-const criteriosAdicionais = ref([]);
-const pesos = ref([4, 3, 3]); // Pesos iniciais
-const showNewQuestionInput = ref(false);
-const novaPergunta = ref('');
+// Limitação para adicionar no máximo 2 critérios adicionais
+const maxCriterios = 2;
 
-const todosCamposPreenchidos = computed(() => {
-  return notas.value.every(nota => nota !== null && nota >= 0 && nota <= 10) &&
-         criteriosAdicionais.value.every(criterio => criterio.nota !== null && criterio.nota >= 0 && criterio.nota <= 10);
-});
+// Notas e pesos fixos para as 3 perguntas principais
+const notasFixas = ref([0, 0, 0]); // Notas para as perguntas fixas
+const justificativasFixas = ref(["", "", ""]); // Justificativas para cada pergunta fixa
+const pesosFixos = ref([4, 3, 3]); // Pesos iniciais: somam 10
 
-const notasCompletas = computed(() => {
-  return [...notas.value, ...criteriosAdicionais.value.map(criterio => criterio.nota)];
-});
+// Perguntas fixas
+const perguntasFixas = ref([
+  { texto: props.q1, descricao: props.p1 },
+  { texto: props.q2, descricao: props.p2 },
+  { texto: props.q3, descricao: props.p3 },
+]);
 
-function recalcularPesos() {
-  const totalPesos = 10;
-  const numeroDePesos = 3 + criteriosAdicionais.value.length;
-  const pesoPadrao = Math.floor(totalPesos / numeroDePesos);
-  const pesoExtra = totalPesos % numeroDePesos;
+// Critérios dinâmicos adicionados pelo usuário
+const criterios = ref([]);
 
-  pesos.value = Array(numeroDePesos).fill(pesoPadrao);
-  pesos.value[0] += pesoExtra;
-}
-
-function exibirInputPergunta() {
-  showNewQuestionInput.value = true;
-}
-
-function salvarPergunta() {
-  if (novaPergunta.value.trim() !== '' && criteriosAdicionais.value.length < 2) {
-    criteriosAdicionais.value.push({
-      pergunta: novaPergunta.value,
-      nota: null,
-      placeholder: 'Digite a nota',
-    });
-    novaPergunta.value = '';
-    showNewQuestionInput.value = false;
+// Adiciona um novo critério dinâmico (até o limite de 2)
+function adicionarCriterio() {
+  if (criterios.value.length < maxCriterios) {
+    criterios.value.push({ nome: "", nota: 0, justificativa: "" });
     recalcularPesos();
   }
 }
 
-function cancelarPergunta() {
-  novaPergunta.value = '';
-  showNewQuestionInput.value = false;
-}
-
+// Remove um critério dinâmico e recalcula os pesos
 function removerCriterio(index) {
-  criteriosAdicionais.value.splice(index, 1);
-  recalcularPesos(); 
-  if (criteriosAdicionais.value.length < 2) {
-    showNewQuestionInput.value = false;
-  }
+  criterios.value.splice(index, 1);
+  recalcularPesos();
 }
 
-function salvarInput() {
-  const camposValidos = todosCamposPreenchidos.value;
+// Calcula os pesos rebalanceados para perguntas fixas e critérios dinâmicos
+const pesosRebalanceados = computed(() => {
+  const totalPesos = 10; // A soma total dos pesos deve ser sempre 10
+  const totalCriterios = 3 + criterios.value.length;
 
-  if (!camposValidos) {
-    AvaliacaoSalva.value = "Cada nota deve ser entre 0 e 10.";
-    setTimeout(() => { AvaliacaoSalva.value = ""; }, 1500);
-  } else {
-    const media = calcularMediaPonderada(notasCompletas.value);
-    AvaliacaoSalva.value = "Avaliação feita com sucesso!";
-    setTimeout(() => { AvaliacaoSalva.value = ""; }, 2000);
-    emit('atualizar-media', media);
+  // Calcula o peso base para cada critério
+  const pesoBase = Math.floor(totalPesos / totalCriterios);
+  const pesos = Array(totalCriterios).fill(pesoBase);
 
-    // Armazenar as avaliações no localStorage, incluindo justificativas
-    const avaliacoes = [
-      { pergunta: q1, nota: notas.value[0], peso: pesos.value[0], justificativa: justificativas.value[0] },
-      { pergunta: q2, nota: notas.value[1], peso: pesos.value[1], justificativa: justificativas.value[1] },
-      { pergunta: q3, nota: notas.value[2], peso: pesos.value[2], justificativa: justificativas.value[2] },
-      ...criteriosAdicionais.value.map((criterio, index) => ({
-        pergunta: criterio.pergunta,
-        nota: criterio.nota,
-        peso: pesos.value[index + 3],
-        justificativa: criterio.justification
-      }))
-    ];
-
-    localStorage.setItem(`avaliacoes_${props.nomeProduto}_${props.abaIndex}`, JSON.stringify(avaliacoes));
+  // Ajusta o restante para garantir que a soma seja exatamente 10
+  let restante = totalPesos - pesoBase * totalCriterios;
+  for (let i = 0; restante > 0; i = (i + 1) % totalCriterios) {
+    pesos[i]++;
+    restante--;
   }
-}
 
+  return pesos; // Retorna os pesos ajustados
+});
 
-// Função para calcular a média ponderada com pesos dinâmicos
-function calcularMediaPonderada(notas) {
-  const somaPesos = pesos.value.reduce((acc, peso) => acc + peso, 0);
-  const somaPonderada = notas.reduce((acc, nota, index) => acc + nota * pesos.value[index], 0);
+// Calcula a média ponderada com base nas notas e nos pesos
+const calcularMediaPonderada = computed(() => {
+  let soma = 0;
+  let totalPesos = 0;
 
-  return (somaPonderada / somaPesos).toFixed(2);
+  // Média ponderada das perguntas fixas
+  notasFixas.value.forEach((nota, index) => {
+    soma += nota * pesosRebalanceados.value[index];
+    totalPesos += pesosRebalanceados.value[index];
+  });
+
+  // Média ponderada dos critérios dinâmicos
+  criterios.value.forEach((criterio, index) => {
+    const peso = pesosRebalanceados.value[index + 3];
+    soma += criterio.nota * peso;
+    totalPesos += peso;
+  });
+
+  // Retorna a média calculada e emite para o componente pai
+  const media = totalPesos > 0 ? (soma / totalPesos).toFixed(2) : "0.00";
+  emit("atualizar-media", media);
+  return media;
+});
+
+// Função para salvar os dados no localStorage
+function salvarDados() {
+  const dados = {
+    notasFixas: notasFixas.value,
+    justificativasFixas: justificativasFixas.value,
+    criterios: criterios.value,
+    mediaPonderada: calcularMediaPonderada.value,
+  };
+  localStorage.setItem("avaliacao", JSON.stringify(dados));
+  alert("Dados salvos com sucesso!");
 }
 </script>
 
 <style scoped>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
-
-.form {
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  padding: 10px;
-  width: 800px;
-  border-radius: 15px;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.title {
-  display: flex;
-  justify-content: flex-start;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.title img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+/* Estilos principais para o layout do formulário */
+.form-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.sla h1, .sla p {
-  margin: 0;
-}
-
-.sla h1 {
-  font-size: 40px;
-  color: #333;
-}
-
-.sla p {
-  font-size: 30px;
-  color: #666;
-}
-
-.form-group {
+.fixed-criterios,
+.criterio {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  p {
-    margin: 0;
-    width: 640px;
-    font-weight: bolder;
-    color: black;
-  }
-}
-
-.form-group label {
-  font-size: 18px;
-  font-weight: bold;
-  color: #555;
-  flex: 1;
-}
-
-/* Wrapper para alinhar o botão de remover e o input de nota */
-.input-remove-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.form-group input {
-  padding: 10px;
-  text-align: center;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 60px;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease-in-out;
-}
-
-.form-group input:focus {
-  background-color: #fff;
-  border-color: #348ACF;
-  outline: none;
-}
-input[type=number]::-webkit-inner-spin-button { 
-    -webkit-appearance: none;
-    
-}
-input[type=number] { 
-   -moz-appearance: textfield;
-   appearance: textfield;
-
-}
-
-.remove-button {
-  padding: 5px 12px;
-  background-color: #ff4d4d;
-  color: #fff;
-  font-size: 14px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: bold;
-}
-
-.remove-button:hover {
-  background-color: #d42f2f;
-}
-
-/* Estilo para o botão de "Salvar critério" */
-.form-group button[type="button"] {
-  padding: 8px 12px;
-  background-color: #4CAF50;
-  color: #fff;
-  font-size: 14px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: bold;
-}
-
-.form-group button[type="button"]:hover {
-  background-color: #45a049;
-}
-
-.botao button {
-  padding: 8px 15px;
-  border-radius: 5px;
-  border: none;
-  background-color: #348ACF;
-  font-size: 18px;
-  font-weight: bolder;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-right: 10px;
-}
-
-.botao button:hover {
-  background-color: #0e66af;
-  transform: scale(1.05);
-}
-
-.box, .box2 {
-  width: auto;
-  background-color: #ededed;
-  padding: 10px;
-  border-radius: 10px;
-  max-width: 800px;
-  margin: 10px 0;
-}
-
-.avaliacao {
-  color: rgb(49, 164, 49);
-  font-size: 20px;
-  text-align: center;
-  font-weight: bolder;
-}
-.form-group {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-.justification-box {
+  flex-direction: column;
   margin-bottom: 20px;
 }
 
-.justification-box textarea {
-  width: 100%;
-  max-width: 760px;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ddd;
+input,
+textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  resize: vertical;
-  background-color: #f9f9f9;
+  font-size: 16px;
+  margin-top: 5px;
 }
 
-.justification-box textarea:focus {
-  background-color: #fff;
-  border-color: #348ACF;
-  outline: none;
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+.btn-adicionar,
+.btn-remover,
+.btn-salvar {
+  width: 100%;
+  padding: 10px;
+  font-weight: bold; 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-adicionar {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.btn-adicionar:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.btn-remover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-salvar {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-salvar:hover {
+  background-color: #0056b3;
+}
+
+.resultado {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
 }
 </style>
